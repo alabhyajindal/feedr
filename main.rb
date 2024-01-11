@@ -30,22 +30,24 @@ def extractHTML(url, identifiers)
   doc = Nokogiri::HTML(html)
 
   output = identifiers.map do |identifier|
-      {elem: doc.css(identifier[:element]), attr: identifier[:attribute]}
-  end
-
-  output = output.map do |o|
-    if o[:attr] == 'text'
-      o[:elem].text
+    if identifier[:attribute] == 'text'
+      doc.css(identifier[:element]).map(&:text)
     else
-      o[:elem].attribute(o[:attr]).value
+      doc.css(identifier[:element]).map { |elem| elem.attribute(identifier[:attribute]).value }
     end
   end
 
-  output.each do |o| 
-    puts o
-    puts "\n"
-  end
+  min_length = output.map { |o| o.size }.min
 
+  new_array = (0...min_length).map do |i|
+    result = {}
+
+    identifiers.each_with_index do |identifier, index|
+      result[:"value#{index + 1}"] = output[index][i]
+    end
+
+    result
+  end
 end
 
 def extraction_guide(identifiers)
