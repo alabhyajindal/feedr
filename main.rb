@@ -3,7 +3,6 @@ require 'nokogiri'
 require 'sinatra'
 require 'cgi/util'
 
-# User provided
 response = HTTParty.get('https://plurrrr.com/')
 
 html = response.body
@@ -11,13 +10,16 @@ html = response.body
 doc = Nokogiri::HTML(html)
 
 items = doc.css('article').map do |item|
-  first = CGI.escapeHTML(item.css('h2').text)
-  second = CGI.escapeHTML(item.css('blockquote p').text)
-  third = CGI.escapeHTML(item.css('h2 a').attribute('href').value)
+  title = CGI.escapeHTML(item.css('h2').text)
+  description = CGI.escapeHTML(item.css('blockquote p').text)
+  link = CGI.escapeHTML(item.css('h2 a').attribute('href').value)
 
-  { first: first, second: second, third: third }
-  
+  { title: title, description: description, link: link }
 end
+
+# titles = doc.css('article h2')
+# links = doc.css('article blockquote p')
+# descriptions = doc.css('article h2 a')
 
 get '/' do
   content_type 'text/xml'
