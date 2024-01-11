@@ -52,6 +52,7 @@
   const urlInput = document.getElementById('url')
   const loadButton = document.getElementById('load')
   const htmlArea = document.getElementById('html')
+  const extractions = document.getElementById('extractions')
 
   async function loadHTML(url) {
     const res = await fetch(`/source/?url=${url}`)
@@ -82,8 +83,30 @@
     return data
   }
 
+  function renderExtractedData(items) {
+    let result = '';
+    items.forEach((item, index) => {
+      let keyCount = Object.keys(item).length;
+      let currentIndex = 0;
+
+      for (let key in item) {
+        result += item[key];
+        currentIndex++;
+
+        if (currentIndex < keyCount) {
+          result += '\n';
+        } else {
+          result += '\n\n\n';
+        }
+      }
+    });
+
+  extractions.innerHTML = result;
+  }
+
   extractButton.addEventListener('click', async (e) => {
-    const body = { url: URL, parent: parent.value, identifiers: identifiers.value }
+    const body = { url: URL, identifiers: identifiers.value }
     const extractedText = await extractText(body)
+    renderExtractedData(JSON.parse(extractedText))
   })
 </script>

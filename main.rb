@@ -1,6 +1,6 @@
 require 'httparty'
 require 'nokogiri'
-# require 'sinatra'
+require 'sinatra'
 require 'cgi/util'
 require 'json'
 
@@ -59,30 +59,24 @@ def extraction_guide(identifiers)
   end
 end
 
-guide = extraction_guide("article h2
-article blockquote p
-article h2 a = href")
+get '/' do
+  erb :index
+end
 
-extractHTML('https://plurrrr.com/', guide)
+get '/source/' do
+  send_file './test'
+end
 
+post '/extract' do
+  request_body = JSON.parse(request.body.read)
+  url, identifiers = request_body.values_at('url', 'identifiers')
+  
+  identifiers = extraction_guide(identifiers)
+  extractions = extractHTML(url, identifiers)
 
-
-# get '/' do
-#   erb :index
-# end
-
-# get '/source/' do
-#   send_file './test'
-# end
-
-# post '/extract' do
-#   request_body = JSON.parse(request.body.read)
-#   url, parent, identifiers = request_body.values_at('url', 'parent', 'identifiers')
-#   identifiers = identifiers.split("\n")
-#   # p [url, parent, identifiers]
-#   extractions = extractHTML(url, parent, identifiers)
-#   "foo"
-# end
+  content_type 'application/json'
+  extractions.to_json
+end
 
 =begin
   Create UI
