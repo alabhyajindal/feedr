@@ -27,10 +27,8 @@ end
 #   erb :test, locals: { items: items }
 # end
 
-foo = "html string"
-
 get '/source/' do
-  foo
+  send_file './test'
 end
 
 =begin
