@@ -17,7 +17,38 @@
 
 </section>
 
+<br>
+<br>
+<br>
+
+<section>
+  <label>Enter parent identifier
+    <br>
+    <textarea id='parent' cols='70' rows='5'></textarea>
+  </label>
+  <br>
+  <br>
+  <label>Enter item identifiers
+    <br>
+    <textarea id='items' cols='70' rows='7'></textarea>
+  </label>
+
+  <br>
+  <br>
+
+  <button id='extract'>Extract</button>
+
+  <br>
+  <br>
+
+  <textarea id='extractions' cols='70' rows='20'></textarea>
+</section>
+
 <script>
+  // Globals
+  let URL = 'https://plurrrr.com/'
+
+  // HTML load
   const urlInput = document.getElementById('url')
   const loadButton = document.getElementById('load')
   const htmlArea = document.getElementById('html')
@@ -29,9 +60,30 @@
   }
 
   loadButton.addEventListener('click', async (e) => {
-    const url = encodeURI(urlInput.value)
-    const html = await loadHTML(url)
+    URL = encodeURI(urlInput.value)
+    const html = await loadHTML(URL)
 
     htmlArea.value = html
+  })
+
+  // HTML extract
+  const extractButton = document.getElementById('extract')
+  const parent = document.getElementById('parent')
+  const items = document.getElementById('items')
+
+  async function extractText(body) {
+    const res = await fetch(`/extract`,
+      {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json'},
+        body: JSON.stringify(body)
+      })
+    const data = await res.text()
+    return data
+  }
+
+  extractButton.addEventListener('click', async (e) => {
+    const body = { url: URL, parent: parent.value, items: items.value }
+    const extractedText = await extractText(body)
   })
 </script>

@@ -2,6 +2,7 @@ require 'httparty'
 require 'nokogiri'
 require 'sinatra'
 require 'cgi/util'
+require 'json'
 
 # response = HTTParty.get('https://plurrrr.com/')
 
@@ -29,6 +30,13 @@ end
 
 get '/source/' do
   send_file './test'
+end
+
+post '/extract' do
+  request_body = JSON.parse(request.body.read)
+  url, parent, items = request_body.values_at('url', 'parent', 'items')
+  p [url, parent, items]
+  "foo"
 end
 
 =begin
