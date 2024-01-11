@@ -1,6 +1,6 @@
 require 'httparty'
 require 'nokogiri'
-require 'sinatra'
+# require 'sinatra'
 require 'cgi/util'
 require 'json'
 
@@ -18,26 +18,69 @@ require 'json'
 #   { title: title, description: description, link: link }
 # end
 
-
-get '/' do
-  erb :index
-end
-
 # get '/test' do
 #   content_type 'text/xml'
 #   erb :test, locals: { items: items }
 # end
 
-get '/source/' do
-  send_file './test'
+def extractHTML(url, identifiers)
+  # response = HTTParty.get(url)
+  # html = response.body
+  html = File.read('./test')
+  doc = Nokogiri::HTML(html)
+
+  output = identifiers.map do |identifier|
+      {elem: doc.css(identifier[:element]), attr: identifier[:attribute]}
+  end
+
+  output = output.map do |o|
+    if o[:attr] == 'text'
+      o[:elem].text
+    else
+      o[:elem].attribute(o[:attr]).value
+    end
+  end
+
+  output.each do |o| 
+    puts o
+    puts "\n"
+  end
+
 end
 
-post '/extract' do
-  request_body = JSON.parse(request.body.read)
-  url, parent, items = request_body.values_at('url', 'parent', 'items')
-  p [url, parent, items]
-  "foo"
+def extraction_guide(identifiers)
+  lines = identifiers.split("\n")
+
+  lines.map do |line|
+    element, attribute = line.split("=")
+    {element: element.strip, attribute: attribute ? attribute.strip : "text"}
+  end
 end
+
+guide = extraction_guide("article h2
+article blockquote p
+article h2 a = href")
+
+extractHTML('https://plurrrr.com/', guide)
+
+
+
+# get '/' do
+#   erb :index
+# end
+
+# get '/source/' do
+#   send_file './test'
+# end
+
+# post '/extract' do
+#   request_body = JSON.parse(request.body.read)
+#   url, parent, identifiers = request_body.values_at('url', 'parent', 'identifiers')
+#   identifiers = identifiers.split("\n")
+#   # p [url, parent, identifiers]
+#   extractions = extractHTML(url, parent, identifiers)
+#   "foo"
+# end
 
 =begin
   Create UI

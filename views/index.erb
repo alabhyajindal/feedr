@@ -30,7 +30,7 @@
   <br>
   <label>Enter item identifiers
     <br>
-    <textarea id='items' cols='70' rows='7'></textarea>
+    <textarea id='identifiers' cols='70' rows='7'></textarea>
   </label>
 
   <br>
@@ -83,7 +83,7 @@
   }
 
   extractButton.addEventListener('click', async (e) => {
-    const body = { url: URL, parent: parent.value, items: items.value }
+    const body = { url: URL, parent: parent.value, identifiers: identifiers.value }
     const extractedText = await extractText(body)
   })
 </script>
