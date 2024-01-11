@@ -31,9 +31,9 @@ def extractHTML(url, identifiers)
 
   output = identifiers.map do |identifier|
     if identifier[:attribute] == 'text'
-      doc.css(identifier[:element]).map(&:text)
+      doc.css(identifier[:element]).map { |elem| CGI.escapeHTML(elem.text) }
     else
-      doc.css(identifier[:element]).map { |elem| elem.attribute(identifier[:attribute]).value }
+      doc.css(identifier[:element]).map { |elem| CGI.escapeHTML(elem.attribute(identifier[:attribute]).value) }
     end
   end
 
