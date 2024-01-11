@@ -1,13 +1,29 @@
-<rss version="2.0">
-  <channel>
+<h1>Feedr</h1>
 
-    <% items.each do |item| %>
-      <item>
-        <title><%= item[:title] %></title>
-        <link><%= item[:link] %></link>
-      <description><%= item[:description] %></description>
-    </item>
-  <% end %>
+<label>
+  <input id='url'>
+  URL
+</label>
 
-</channel>
-</rss>
+<button id='load'>Load</button>
+
+<textarea id='html'></textarea>
+
+<script>
+  const urlInput = document.getElementById('url')
+  const loadButton = document.getElementById('load')
+  const htmlArea = document.getElementById('html')
+
+  async function loadHTML(url) {
+    const res = await fetch(`/source/?url=${url}`)
+    const data = await res.text()
+    return data
+  }
+
+  loadButton.addEventListener('click', async (e) => {
+    const url = encodeURI(urlInput.value)
+    const html = await loadHTML(url)
+
+    htmlArea.value = html
+  })
+</script>
