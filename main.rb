@@ -8,27 +8,17 @@ require 'sqlite3'
 DB = SQLite3::Database.new('feeds.db')
 DB.results_as_hash = true
 
-# items = doc.css('article').map do |item|
-#   title = CGI.escapeHTML(item.css('h2').text)
-#   description = CGI.escapeHTML(item.css('blockquote p').text)
-#   link = CGI.escapeHTML(item.css('h2 a').attribute('href').value)
-
-#   { title: title, description: description, link: link }
-# end
-
-# get '/test' do
-#   content_type 'text/xml'
-#   erb :test, locals: { items: items }
-# end
-
 $html_response
 
 def extract_HTML(url, identifiers)
-  # testing
-  # html = File.read('./test')
+  
+  lines = identifiers.split("\n")
 
-  # response = HTTParty.get(url)
-  # html = response.body
+  identifiers = lines.map do |line|
+    element, attribute = line.split("=")
+    {element: element.strip, attribute: attribute ? attribute.strip : "text"}
+  end
+
   doc = Nokogiri::HTML($html_response)
 
   output = identifiers.map do |identifier|
@@ -41,30 +31,26 @@ def extract_HTML(url, identifiers)
 
   min_length = output.map { |o| o.size }.min
 
-  output_string = (0...min_length).map do |i|
-    values = identifiers.map.with_index do |identifier, index|
-      if identifier[:attribute] == 'text'
-        CGI.escapeHTML(doc.css(identifier[:element])[i].text)
-      else
-        CGI.escapeHTML(doc.css(identifier[:element])[i].attribute(identifier[:attribute]).value)
-      end
+  (0...min_length).map do |i|
+    result = {}
+
+    identifiers.each_with_index do |identifier, index|
+      result[:"value#{index + 1}"] = output[index][i]
     end
 
-    values.join("\n")
-  end.join("\n\n")
-
-  return output_string
+    result
+  end
 end
 
-
-def extraction_guide(identifiers)
-  p identifiers
-  lines = identifiers.split("\n")
-
-  lines.map do |line|
-    element, attribute = line.split("=")
-    {element: element.strip, attribute: attribute ? attribute.strip : "text"}
+def pp_extracted_HTML(extractions) 
+  pp_string = ''
+  extractions.map do |e|
+    e.values.each.with_index do |value, index|
+      pp_string += value + "\n"
+      pp_string += "\n\n" if index == e.values.size - 1
+    end
   end
+  pp_string
 end
 
 get '/' do
@@ -72,9 +58,6 @@ get '/' do
 end
 
 post '/load' do
-  # for testing
-  # html = File.read('./test')
-
   begin
     request_body = JSON.parse(request.body.read)
     url = request_body.values_at('url')[0]
@@ -97,10 +80,10 @@ post '/extract' do
     request_body = JSON.parse(request.body.read)
     url, identifiers = request_body.values_at('url', 'identifiers')
 
-    identifiers = extraction_guide(identifiers)
     extractions = extract_HTML(url, identifiers)
+    pp_extractions = pp_extracted_HTML(extractions)
 
-    "<textarea autocomplete='off' readonly id='extractions' name='extractions' cols='70' rows='20'>#{extractions}</textarea>"
+    "<textarea autocomplete='off' readonly id='extractions' name='extractions' cols='70' rows='20'>#{pp_extractions}</textarea>"
 
   rescue => e
     "<textarea autocomplete='off' readonly id='extractions' name='extractions' cols='70' rows='20'>Error: #{e.message}</textarea>"
@@ -140,7 +123,6 @@ delete '/feed/:id/delete' do
 end
 
 get '/feeds' do
-  DB.results_as_hash = true
   feeds = DB.execute('SELECT * FROM feeds;')
   content_type "text/html"
   p feeds
