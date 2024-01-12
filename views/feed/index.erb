@@ -3,8 +3,11 @@
 <ul>
   <% feeds.each do |feed| %>
     <li>
-      <a href="/feed/<%= feed['id'] %>/edit">
+      <a href="/feed/<%= feed['id'] %>">
         <%= feed['title'] %>
+      </a>
+      <a href="/feed/<%= feed['id'] %>/edit">
+        <button>Edit</button>
       </a>
       <button hx-delete='/feed/<%= feed['id'] %>/delete'>Delete</button>
     </li>
