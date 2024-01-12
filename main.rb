@@ -78,10 +78,10 @@ post '/load' do
   # for testing
   # html = File.read('./test')
 
-  request_body = JSON.parse(request.body.read)
-  url = request_body.values_at('url')[0]
-
   begin
+    request_body = JSON.parse(request.body.read)
+    url = request_body.values_at('url')[0]
+
     response = HTTParty.get(url)
   
     if response.success?
@@ -92,20 +92,23 @@ post '/load' do
     end
   
   rescue => e
-    "<textarea autocomplete='off' readonly id='html' name='html' cols='70' rows='30'>#{e.message}</textarea>"
+    "<textarea autocomplete='off' readonly id='html' name='html' cols='70' rows='30'>Error: #{e.message}</textarea>"
   end
-  
-
 end
 
 post '/extract' do
-  request_body = JSON.parse(request.body.read)
-  url, identifiers = request_body.values_at('url', 'identifiers')
+  begin
+    request_body = JSON.parse(request.body.read)
+    url, identifiers = request_body.values_at('url', 'identifiers')
 
-  identifiers = extraction_guide(identifiers)
-  extractions = extract_HTML(url, identifiers)
+    identifiers = extraction_guide(identifiers)
+    extractions = extract_HTML(url, identifiers)
 
-  "<textarea autocomplete='off' readonly id='extractions' name='extractions' cols='70' rows='20'>#{extractions}</textarea>"
+    "<textarea autocomplete='off' readonly id='extractions' name='extractions' cols='70' rows='20'>#{extractions}</textarea>"
+
+  rescue => e
+    "<textarea autocomplete='off' readonly id='extractions' name='extractions' cols='70' rows='20'>Error: #{e.message}</textarea>"
+  end
 end
 
 post '/feed/create' do
