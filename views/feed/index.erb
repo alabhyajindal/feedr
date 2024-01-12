@@ -6,7 +6,7 @@
       <a href="/feed/<%= feed['id'] %>/edit">
         <%= feed['title'] %>
       </a>
-      <button>Delete</button>
+      <button hx-delete='/feed/<%= feed['id'] %>/delete'>Delete</button>
     </li>
   <% end %>
 </ul>

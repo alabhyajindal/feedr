@@ -130,6 +130,15 @@ post '/feed/:id/update' do
   headers 'HX-Redirect' => '/feeds'
 end
 
+delete '/feed/:id/delete' do
+  feed_id = params['id']
+
+  DB.execute("DELETE FROM feeds WHERE id = ?", feed_id)
+
+  status 200
+  headers 'HX-Redirect' => '/feeds'
+end
+
 get '/feeds' do
   DB.results_as_hash = true
   feeds = DB.execute('SELECT * FROM feeds;')
