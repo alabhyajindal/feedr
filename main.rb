@@ -70,7 +70,7 @@ end
 post '/extract' do
   request_body = JSON.parse(request.body.read)
   url, identifiers = request_body.values_at('url', 'identifiers')
-  
+
   identifiers = extraction_guide(identifiers)
   extractions = extractHTML(url, identifiers)
 
@@ -79,16 +79,11 @@ post '/extract' do
 end
 
 =begin
-  Create UI
+  Add section to enter feed details (title, link, description)
+  Add submit button to complete feed creation
 
-  (to get HTML)
-  Input to enter URL
-  Button to fetch HTML
-  Textarea to display HTML
+  Write docs for feed creation on /docs
 
-  (to define search pattern)
-  Textarea for parent identifier
-  Textarea for individual item identifier
-  Button to extract 
-  Textarea to show extracted content
+  Set up SQLite database
+  Insert row in db on feed creation
 =end

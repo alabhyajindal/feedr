@@ -13,7 +13,7 @@
 
   <br>
   <br>
-  <textarea id='html' cols='70' rows='30'></textarea>
+  <textarea readonly id='html' cols='70' rows='30'></textarea>
 
 </section>
 
@@ -22,12 +22,6 @@
 <br>
 
 <section>
-  <label>Enter parent identifier
-    <br>
-    <textarea id='parent' cols='70' rows='5'></textarea>
-  </label>
-  <br>
-  <br>
   <label>Enter item identifiers
     <br>
     <textarea id='identifiers' cols='70' rows='7'></textarea>
@@ -41,7 +35,7 @@
   <br>
   <br>
 
-  <textarea id='extractions' cols='70' rows='20'></textarea>
+  <textarea readonly id='extractions' cols='70' rows='20'></textarea>
 </section>
 
 <script>
@@ -69,7 +63,6 @@
 
   // HTML extract
   const extractButton = document.getElementById('extract')
-  const parent = document.getElementById('parent')
   const items = document.getElementById('items')
 
   async function extractText(body) {
