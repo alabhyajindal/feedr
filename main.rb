@@ -8,8 +8,6 @@ require 'sqlite3'
 DB = SQLite3::Database.new('feeds.db')
 DB.results_as_hash = true
 
-$html_response
-
 def extract_HTML(url, identifiers)
   
   lines = identifiers.split("\n")
@@ -19,7 +17,8 @@ def extract_HTML(url, identifiers)
     {element: element.strip, attribute: attribute ? attribute.strip : "text"}
   end
 
-  doc = Nokogiri::HTML($html_response)
+  response = HTTParty.get(url)
+  doc = Nokogiri::HTML(response.body)
 
   output = identifiers.map do |identifier|
     if identifier[:attribute] == 'text'
@@ -62,10 +61,9 @@ post '/load' do
     request_body = JSON.parse(request.body.read)
     url = request_body.values_at('url')[0]
     response = HTTParty.get(url)
-  
+
     if response.success?
-      $html_response = response.body
-      "<textarea autocomplete='off' readonly id='html' name='html' cols='70' rows='30'>#{$html_response}</textarea>"
+      "<textarea autocomplete='off' readonly id='html' name='html' cols='70' rows='30'>#{response.body}</textarea>"
     else
       "<textarea autocomplete='off' readonly id='html' name='html' cols='70' rows='30'>We are unable to download the HTML from your URL. Please try again later.</textarea>"
     end
