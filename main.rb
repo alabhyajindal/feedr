@@ -58,7 +58,6 @@ def pp_extracted_HTML(extractions)
       pp_string += "\n\n" if index == e.values.size - 1
     end
   end
-  pp_string
 end
 
 def generate_xml(url, extractions, feed_title, feed_description)
@@ -83,9 +82,9 @@ def generate_xml(url, extractions, feed_title, feed_description)
   builder.to_xml
 end
 
-extractions = extract_HTML('https://plurrrr.com/', "article h2\narticle h2 a=href")
-my_xml = generate_xml('https://plurrrr.com/', extractions, 'my title', 'my desc')
-puts my_xml
+# extractions = extract_HTML('https://plurrrr.com/', "article h2\narticle h2 a=href")
+# my_xml = generate_xml('https://plurrrr.com/', extractions, 'my title', 'my desc')
+# puts my_xml
 
 get '/' do
   erb :index
@@ -128,10 +127,9 @@ post '/feed/create' do
   url, identifiers, title, description = request_body.values_at('url', 'identifiers', 'feed_title', 'feed_description')
 
   extractions = extract_HTML(url, identifiers)
-  xml_content = generate_xml(url, extractions, title, description)
-  p xml_content
+  xml_data = generate_xml(url, extractions, title, description)
 
-  DB.execute("INSERT INTO feeds (url, identifiers, title, description) VALUES (?, ?, ?, ?)", [url, identifiers, title, description])
+  DB.execute("INSERT INTO feeds (url, identifiers, title, description, xml_data) VALUES (?, ?, ?, ?, ?)", [url, identifiers, title, description, xml_data])
 
   status 200
   headers 'HX-Redirect' => '/feeds'
@@ -181,11 +179,11 @@ get '/feed/:id' do
   feed_id = params['id']
   feed = DB.execute('SELECT * FROM feeds WHERE id = ?', feed_id).first
 
-  url, identifiers = feed.values_at('url', 'identifiers')
-  extractions = extract_HTML(url, identifiers)
 
   if feed
-    erb :'feed/show', locals: { extractions: extractions }
+    xml_data = feed.values_at('xml_data')
+    content_type 'application/xml'
+    xml_data
   else
     "Feed not found"
   end
