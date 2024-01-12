@@ -10,7 +10,7 @@ DB.results_as_hash = true
 
 # Helper functions
 
-def extract_HTML(url, identifiers)
+def extract_html(url, identifiers)
   lines = identifiers.split("\n")
 
   identifiers = lines.map do |line|
@@ -52,7 +52,7 @@ def extract_HTML(url, identifiers)
 end
 
 
-def pp_extracted_HTML(extractions) 
+def pp_extracted_html(extractions) 
   pp_string = ''
   extractions.map do |e|
     e.values.each.with_index do |value, index|
@@ -60,6 +60,7 @@ def pp_extracted_HTML(extractions)
       pp_string += "\n\n" if index == e.values.size - 1
     end
   end
+  pp_string
 end
 
 def generate_xml(url, extractions, feed_title, feed_description)
@@ -84,7 +85,7 @@ def generate_xml(url, extractions, feed_title, feed_description)
   builder.to_xml
 end
 
-# extractions = extract_HTML('https://plurrrr.com/', "article h2\narticle h2 a=href")
+# extractions = extract_html('https://plurrrr.com/', "article h2\narticle h2 a=href")
 # my_xml = generate_xml('https://plurrrr.com/', extractions, 'my title', 'my desc')
 # puts my_xml
 
@@ -96,7 +97,7 @@ post '/feed/create' do
   request_body = JSON.parse(request.body.read)
   url, identifiers, title, description = request_body.values_at('url', 'identifiers', 'feed_title', 'feed_description')
 
-  extractions = extract_HTML(url, identifiers)
+  extractions = extract_html(url, identifiers)
   xml_data = generate_xml(url, extractions, title, description)
 
   DB.execute("INSERT INTO feeds (url, identifiers, title, description, xml_data) VALUES (?, ?, ?, ?, ?)", [url, identifiers, title, description, xml_data])
@@ -110,7 +111,7 @@ post '/feed/:id/update' do
   request_body = JSON.parse(request.body.read)
   url, identifiers, title, description = request_body.values_at('url', 'identifiers', 'feed_title', 'feed_description')
 
-  extractions = extract_HTML(url, identifiers)
+  extractions = extract_html(url, identifiers)
   xml_data = generate_xml(url, extractions, title, description)
 
   DB.execute("UPDATE feeds SET url = ?, identifiers = ?, title = ?, description = ?, xml_data =? WHERE id = ?", [url, identifiers, title, description, xml_data, feed_id])
@@ -164,30 +165,13 @@ end
 
 # Actions
 
-post '/load' do
-  begin
-    request_body = JSON.parse(request.body.read)
-    url = request_body.values_at('url')[0]
-    response = HTTParty.get(url)
-
-    if response.success?
-      "<textarea autocomplete='off' readonly id='html' name='html' cols='70' rows='30'>#{response.body}</textarea>"
-    else
-      "<textarea autocomplete='off' readonly id='html' name='html' cols='70' rows='30'>We are unable to download the HTML from your URL. Please try again later.</textarea>"
-    end
-  
-  rescue => e
-    "<textarea autocomplete='off' readonly id='html' name='html' cols='70' rows='30'>Error: #{e.message}</textarea>"
-  end
-end
-
 post '/extract' do
   begin
     request_body = JSON.parse(request.body.read)
     url, identifiers = request_body.values_at('url', 'identifiers')
 
-    extractions = extract_HTML(url, identifiers)
-    pp_extractions = pp_extracted_HTML(extractions)
+    extractions = extract_html(url, identifiers)
+    pp_extractions = pp_extracted_html(extractions)
 
     "<textarea autocomplete='off' readonly id='extractions' name='extractions' cols='70' rows='20'>#{pp_extractions}</textarea>"
 
