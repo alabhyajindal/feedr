@@ -115,7 +115,8 @@ post '/feed/create' do
   # Save the data to the SQLite database
   DB.execute("INSERT INTO feeds (url, identifiers, title, description) VALUES (?, ?, ?, ?)", [url, identifiers, title, description])
 
-  "Feed saved!"
+  status 200
+  headers 'HX-Redirect' => '/feeds'
 end
 
 post '/feed/:id/update' do
@@ -125,7 +126,8 @@ post '/feed/:id/update' do
 
   DB.execute("UPDATE feeds SET url = ?, identifiers = ?, title = ?, description = ? WHERE id = ?", [url, identifiers, title, description, feed_id])
 
-  "Feed updated!"
+  status 200
+  headers 'HX-Redirect' => '/feeds'
 end
 
 get '/feeds' do
