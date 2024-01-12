@@ -1,7 +1,7 @@
 <h2>Edit Feed</h2>
 
 <section>
-  <form autocomplete='off' hx-ext='json-enc' hx-post='/load' hx-target='#html' hx-trigger='submit' hx-swap='outerHTML'>
+  <form autocomplete='off' hx-ext='json-enc' hx-post='/extract' hx-target='#extractions' hx-trigger='submit' hx-swap='outerHTML'>
     <label>
       URL
       <br>
@@ -10,20 +10,6 @@
 
     <br>
     <br>
-
-    <button>Load</button>
-  </form>
-
-  <br>
-  <textarea readonly id='html' name='html' cols='70' rows='30'></textarea>
-
-</section>
-
-<br>
-<br>
-
-<section>
-  <form autocomplete='off' hx-ext='json-enc' hx-post='/extract' hx-target='#extractions' hx-trigger='submit' hx-swap='outerHTML' hx-include='#url'>
 
     <label>Enter item identifiers
       <br>
