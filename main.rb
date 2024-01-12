@@ -195,3 +195,9 @@ post '/extract' do
     "<textarea autocomplete='off' readonly id='extractions' name='extractions' cols='70' rows='20'>Error: #{e.message}</textarea>"
   end
 end
+
+# Others
+
+get '/docs' do
+  erb :docs
+end

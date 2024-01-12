@@ -1,6 +1,6 @@
 <h2>Add new feed</h2>
 
-<section>
+<!--<section>
   <form autocomplete='off' hx-ext='json-enc' hx-post='/load' hx-target='#html' hx-trigger='submit' hx-swap='outerHTML'>
     <label>
       URL
@@ -20,10 +20,18 @@
 </section>
 
 <br>
-<br>
+<br>-->
 
 <section>
-  <form autocomplete='off' hx-ext='json-enc' hx-post='/extract' hx-target='#extractions' hx-trigger='submit' hx-swap='outerHTML' hx-include='#url'>
+  <form autocomplete='off' hx-ext='json-enc' hx-post='/extract' hx-target='#extractions' hx-trigger='submit' hx-swap='outerHTML'>
+    <label>
+      URL
+      <br>
+      <input autocomplete='off' autofocus required type='url' id='url' name='url'>
+    </label>
+
+    <br>
+    <br>
 
     <label>Enter item identifiers
       <br>
@@ -65,6 +73,6 @@
     <br>
     <br>
 
-    <button id='create'>Create Feed</button>
+    <button id='create'>Add Feed</button>
   </form>
 </section>
