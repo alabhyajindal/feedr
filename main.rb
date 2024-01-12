@@ -24,10 +24,15 @@ require 'json'
 # end
 
 def extract_HTML(url, identifiers)
-  response = HTTParty.get(url)
-  html = response.body
-  # html = File.read('./test')
+  # testing
+  html = File.read('./test')
+
+  # response = HTTParty.get(url)
+  # html = response.body
+
   doc = Nokogiri::HTML(html)
+
+  p identifiers
 
   output = identifiers.map do |identifier|
     if identifier[:attribute] == 'text'
@@ -39,18 +44,24 @@ def extract_HTML(url, identifiers)
 
   min_length = output.map { |o| o.size }.min
 
-  new_array = (0...min_length).map do |i|
-    result = {}
-
-    identifiers.each_with_index do |identifier, index|
-      result[:"value#{index + 1}"] = output[index][i]
+  output_string = (0...min_length).map do |i|
+    values = identifiers.map.with_index do |identifier, index|
+      if identifier[:attribute] == 'text'
+        CGI.escapeHTML(doc.css(identifier[:element])[i].text)
+      else
+        CGI.escapeHTML(doc.css(identifier[:element])[i].attribute(identifier[:attribute]).value)
+      end
     end
 
-    result
-  end
+    values.join("\n")
+  end.join("\n\n")
+
+  return output_string
 end
 
+
 def extraction_guide(identifiers)
+  p identifiers
   lines = identifiers.split("\n")
 
   lines.map do |line|
@@ -94,8 +105,7 @@ post '/extract' do
   identifiers = extraction_guide(identifiers)
   extractions = extract_HTML(url, identifiers)
 
-  content_type 'application/json'
-  extractions.to_json
+  "<textarea autocomplete='off' readonly id='extractions' name='extractions' cols='70' rows='20'>#{extractions}</textarea>"
 end
 
 post '/feed/create' do

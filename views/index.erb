@@ -12,7 +12,6 @@
     <br>
 
     <button>Load</button>
-
   </form>
 
   <br>
@@ -22,20 +21,21 @@
 
 <br>
 <br>
-<br>
 
 <section>
-  <label>Enter item identifiers
+  <form hx-ext='json-enc' hx-post='/extract' hx-target='#extractions' hx-trigger='submit' hx-swap='outerHTML' hx-include='#url'>
+
+    <label>Enter item identifiers
+      <br>
+      <textarea id='identifiers' name='identifiers' cols='70' rows='7'></textarea>
+    </label>
+
     <br>
-    <textarea id='identifiers' name='identifiers' cols='70' rows='7'></textarea>
-  </label>
+    <br>
 
-  <br>
-  <br>
+    <button id='extract'>Extract</button>
 
-  <button id='extract'>Extract</button>
-
-  <br>
+  </form>
   <br>
 
   <textarea autocomplete='off' readonly id='extractions' name='extractions' cols='70' rows='20'></textarea>
