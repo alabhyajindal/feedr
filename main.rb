@@ -3,6 +3,9 @@ require 'nokogiri'
 require 'sinatra'
 require 'cgi/util'
 require 'json'
+require 'sqlite3'
+
+DB = SQLite3::Database.new('feeds.db')
 
 # items = doc.css('article').map do |item|
 #   title = CGI.escapeHTML(item.css('h2').text)
@@ -105,15 +108,11 @@ end
 
 post '/feed/create' do
   request_body = JSON.parse(request.body.read)
-  url, identifiers, title, description = request_body.values_at('url', 'identifiers', 'title', 'description')
+  url, identifiers, title, description = request_body.values_at('url', 'identifiers', 'feed_title', 'feed_description')
+  p request_body
+  p [url, identifiers, title, description]
+  # Save the data to the SQLite database
+  DB.execute("INSERT INTO feeds (url, identifiers, title, description) VALUES (?, ?, ?, ?)", [url, identifiers, title, description])
+
+  "Data saved!"
 end
-
-=begin
-  Add section to enter feed details (title, link, description)
-  Add submit button to complete feed creation
-
-  Write docs for feed creation on /docs
-
-  Set up SQLite database
-  Insert row in db on feed creation
-=end
