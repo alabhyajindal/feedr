@@ -42,8 +42,6 @@ def extract_html(url, identifiers)
         result[:link] = output[index][i].strip
       when 2
         result[:description] = output[index][i].strip
-      else
-        result[:"value#{index + 1}"] = output[index][i].strip
       end
     end
 
