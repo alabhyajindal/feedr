@@ -52,6 +52,32 @@ def pp_extracted_HTML(extractions)
   pp_string
 end
 
+def generate_xml(url, extractions, feed_title, feed_description)
+  builder = Nokogiri::XML::Builder.new(encoding: 'UTF-8') do |xml|
+    xml.rss(version: '2.0') do
+      xml.channel do
+        xml.title feed_title
+        xml.link url
+        xml.description feed_description
+
+        extractions.each do |e|
+          xml.item do
+            e.each do |key, value|
+              xml.send(key, value)
+            end
+          end
+        end
+      end
+    end
+  end
+
+  builder.to_xml
+end
+
+extractions = extract_HTML('https://plurrrr.com/', "article h2\narticle h2 a=href")
+my_xml = generate_xml('https://plurrrr.com/', extractions, 'my title', 'my desc')
+puts my_xml
+
 get '/' do
   erb :index
 end
@@ -91,9 +117,11 @@ end
 post '/feed/create' do
   request_body = JSON.parse(request.body.read)
   url, identifiers, title, description = request_body.values_at('url', 'identifiers', 'feed_title', 'feed_description')
-  p request_body
-  p [url, identifiers, title, description]
-  # Save the data to the SQLite database
+
+  extractions = extract_HTML(url, identifiers)
+  xml_content = generate_xml(url, extractions, title, description)
+  p xml_content
+
   DB.execute("INSERT INTO feeds (url, identifiers, title, description) VALUES (?, ?, ?, ?)", [url, identifiers, title, description])
 
   status 200
@@ -122,8 +150,6 @@ end
 
 get '/feeds' do
   feeds = DB.execute('SELECT * FROM feeds;')
-  content_type "text/html"
-  p feeds
   erb :'feed/index', locals: { feeds: feeds }
 end
 
@@ -141,3 +167,18 @@ end
 get '/feed/new' do
   erb :'feed/new'
 end
+
+get '/feed/:id' do
+  feed_id = params['id']
+  feed = DB.execute('SELECT * FROM feeds WHERE id = ?', feed_id).first
+
+  url, identifiers = feed.values_at('url', 'identifiers')
+  extractions = extract_HTML(url, identifiers)
+
+  if feed
+    erb :'feed/show', locals: { extractions: extractions }
+  else
+    "Feed not found"
+  end
+end
+

@@ -1,13 +1,7 @@
-<rss version="2.0">
-  <channel>
+<h1>Nice</h1>
 
-    <% items.each.with_index do |item, index| %>
-      <item>
-        <title><%= item["value1"] %></title>
-        <link><%= item["value2"] %></link>
-      <description><%= item["value3"] %></description>
-    </item>
+<% extractions.map do |e| %>
+  <% e.values.each.with_index do |value, index| %>
+    <p><%= value %></p>
   <% end %>
-
-</channel>
-</rss>
+<% end %>
