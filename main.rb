@@ -8,6 +8,8 @@ require 'sqlite3'
 DB = SQLite3::Database.new('feeds.db')
 DB.results_as_hash = true
 
+# Helper functions
+
 def extract_HTML(url, identifiers)
   lines = identifiers.split("\n")
 
@@ -86,9 +88,81 @@ end
 # my_xml = generate_xml('https://plurrrr.com/', extractions, 'my title', 'my desc')
 # puts my_xml
 
-get '/' do
-  erb :index
+
+# Routes
+# Feed actions, create, update and delete
+
+post '/feed/create' do
+  request_body = JSON.parse(request.body.read)
+  url, identifiers, title, description = request_body.values_at('url', 'identifiers', 'feed_title', 'feed_description')
+
+  extractions = extract_HTML(url, identifiers)
+  xml_data = generate_xml(url, extractions, title, description)
+
+  DB.execute("INSERT INTO feeds (url, identifiers, title, description, xml_data) VALUES (?, ?, ?, ?, ?)", [url, identifiers, title, description, xml_data])
+
+  status 200
+  headers 'HX-Redirect' => '/feeds'
 end
+
+post '/feed/:id/update' do
+  feed_id = params['id']
+  request_body = JSON.parse(request.body.read)
+  url, identifiers, title, description = request_body.values_at('url', 'identifiers', 'feed_title', 'feed_description')
+
+  extractions = extract_HTML(url, identifiers)
+  xml_data = generate_xml(url, extractions, title, description)
+
+  DB.execute("UPDATE feeds SET url = ?, identifiers = ?, title = ?, description = ?, xml_data =? WHERE id = ?", [url, identifiers, title, description, xml_data, feed_id])
+
+  status 200
+  headers 'HX-Redirect' => '/feeds'
+end
+
+delete '/feed/:id/delete' do
+  feed_id = params['id']
+
+  DB.execute("DELETE FROM feeds WHERE id = ?", feed_id)
+
+  status 200
+  headers 'HX-Redirect' => '/feeds'
+end
+
+# Feed actions, index, edit and new
+
+get '/feeds' do
+  feeds = DB.execute('SELECT * FROM feeds;')
+  erb :'feed/index', locals: { feeds: feeds }
+end
+
+get '/feed/:id/edit' do
+  feed_id = params['id']
+  feed = DB.execute('SELECT * FROM feeds WHERE id = ?', feed_id).first
+
+  if feed
+    erb :'feed/edit', locals: { feed: feed }
+  else
+    "Feed not found"
+  end
+end
+
+get '/feed/new' do
+  erb :'feed/new'
+end
+
+get '/feed/:id' do
+  feed_id = params['id']
+  feed = DB.execute('SELECT * FROM feeds WHERE id = ?', feed_id).first
+  if feed
+    xml_data = feed.values_at('xml_data')
+    content_type 'application/xml'
+    xml_data
+  else
+    "Feed not found"
+  end
+end
+
+# Actions
 
 post '/load' do
   begin
@@ -121,71 +195,3 @@ post '/extract' do
     "<textarea autocomplete='off' readonly id='extractions' name='extractions' cols='70' rows='20'>Error: #{e.message}</textarea>"
   end
 end
-
-post '/feed/create' do
-  request_body = JSON.parse(request.body.read)
-  url, identifiers, title, description = request_body.values_at('url', 'identifiers', 'feed_title', 'feed_description')
-
-  extractions = extract_HTML(url, identifiers)
-  xml_data = generate_xml(url, extractions, title, description)
-
-  DB.execute("INSERT INTO feeds (url, identifiers, title, description, xml_data) VALUES (?, ?, ?, ?, ?)", [url, identifiers, title, description, xml_data])
-
-  status 200
-  headers 'HX-Redirect' => '/feeds'
-end
-
-post '/feed/:id/update' do
-  feed_id = params['id']
-  request_body = JSON.parse(request.body.read)
-  url, identifiers, title, description = request_body.values_at('url', 'identifiers', 'feed_title', 'feed_description')
-
-  DB.execute("UPDATE feeds SET url = ?, identifiers = ?, title = ?, description = ? WHERE id = ?", [url, identifiers, title, description, feed_id])
-
-  status 200
-  headers 'HX-Redirect' => '/feeds'
-end
-
-delete '/feed/:id/delete' do
-  feed_id = params['id']
-
-  DB.execute("DELETE FROM feeds WHERE id = ?", feed_id)
-
-  status 200
-  headers 'HX-Redirect' => '/feeds'
-end
-
-get '/feeds' do
-  feeds = DB.execute('SELECT * FROM feeds;')
-  erb :'feed/index', locals: { feeds: feeds }
-end
-
-get '/feed/:id/edit' do
-  feed_id = params['id']
-  feed = DB.execute('SELECT * FROM feeds WHERE id = ?', feed_id).first
-
-  if feed
-    erb :'feed/edit', locals: { feed: feed }
-  else
-    "Feed not found"
-  end
-end
-
-get '/feed/new' do
-  erb :'feed/new'
-end
-
-get '/feed/:id' do
-  feed_id = params['id']
-  feed = DB.execute('SELECT * FROM feeds WHERE id = ?', feed_id).first
-
-
-  if feed
-    xml_data = feed.values_at('xml_data')
-    content_type 'application/xml'
-    xml_data
-  else
-    "Feed not found"
-  end
-end
-
