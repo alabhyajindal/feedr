@@ -23,7 +23,7 @@ require 'json'
 #   erb :test, locals: { items: items }
 # end
 
-def extractHTML(url, identifiers)
+def extract_HTML(url, identifiers)
   # response = HTTParty.get(url)
   # html = response.body
   html = File.read('./test')
@@ -68,14 +68,21 @@ get '/source/' do
 end
 
 post '/extract' do
+  p request.body.read
+
   request_body = JSON.parse(request.body.read)
   url, identifiers = request_body.values_at('url', 'identifiers')
 
   identifiers = extraction_guide(identifiers)
-  extractions = extractHTML(url, identifiers)
+  extractions = extract_HTML(url, identifiers)
 
   content_type 'application/json'
   extractions.to_json
+end
+
+post '/feed/create' do
+  request_body = JSON.parse(request.body.read)
+  url, identifiers, title, link, description = request_body.values_at('url', 'identifiers', 'title', 'link', 'description')
 end
 
 =begin

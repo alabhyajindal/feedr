@@ -3,7 +3,8 @@
 <section>
   <label>
     URL
-    <input id='url'>
+    <br>
+    <input id='url' name='url'>
   </label>
 
   <br>
@@ -13,7 +14,7 @@
 
   <br>
   <br>
-  <textarea readonly id='html' cols='70' rows='30'></textarea>
+  <textarea readonly id='html' name='html' cols='70' rows='30'></textarea>
 
 </section>
 
@@ -24,7 +25,7 @@
 <section>
   <label>Enter item identifiers
     <br>
-    <textarea id='identifiers' cols='70' rows='7'></textarea>
+    <textarea id='identifiers' name='identifiers' cols='70' rows='7'></textarea>
   </label>
 
   <br>
@@ -35,7 +36,42 @@
   <br>
   <br>
 
-  <textarea readonly id='extractions' cols='70' rows='20'></textarea>
+  <textarea readonly id='extractions' name='extractions' cols='70' rows='20'></textarea>
+</section>
+
+<br>
+<br>
+<br>
+
+<section>
+  <label>
+    Feed Title
+    <br>
+    <input id='feed_title' name='feed_title'>
+  </label>
+
+  <br>
+  <br>
+
+  <label>
+    Feed Link
+    <br>
+    <input id='feed_link' type='url' name='feed_link'>
+  </label>
+
+  <br>
+  <br>
+
+  <label>
+    Feed Description
+    <br>
+    <input id='feed_description' name='feed_description'>
+  </label>
+
+  <br>
+  <br>
+
+  <button id='create'>Create Feed</button>
 </section>
 
 <script>
@@ -55,6 +91,7 @@
   }
 
   loadButton.addEventListener('click', async (e) => {
+    e.preventDefault()
     URL = encodeURI(urlInput.value)
     const html = await loadHTML(URL)
 
@@ -98,8 +135,33 @@
   }
 
   extractButton.addEventListener('click', async (e) => {
+    e.preventDefault()
     const body = { url: URL, identifiers: identifiers.value }
     const extractedText = await extractText(body)
     renderExtractedData(JSON.parse(extractedText))
+  })
+
+  const createButton = document.getElementById('create')
+  const feedTitle = document.getElementById('feed_title')
+  const feedLink = document.getElementById('feed_link')
+  const feedDescription = document.getElementById('feed_description')
+
+  createButton.addEventListener('click', async (e) => {
+    const body = {
+      url: URL,
+      identifiers: identifiers.value,
+      title: feedTitle.value,
+      link: feedLink.value,
+      description: feedDescription.value,
+    }
+
+    const res = await fetch(`/feed/create`,
+      {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json'},
+        body: JSON.stringify(body)
+      })
+    //const data = await res.text()
+    //return data
   })
 </script>
