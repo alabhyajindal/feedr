@@ -37,13 +37,13 @@ def extract_html(url, identifiers)
     identifiers.each_with_index do |identifier, index|
       case index
       when 0
-        result[:title] = output[index][i]
+        result[:title] = output[index][i].strip
       when 1
-        result[:link] = output[index][i]
+        result[:link] = output[index][i].strip
       when 2
-        result[:description] = output[index][i]
+        result[:description] = output[index][i].strip
       else
-        result[:"value#{index + 1}"] = output[index][i]
+        result[:"value#{index + 1}"] = output[index][i].strip
       end
     end
 
