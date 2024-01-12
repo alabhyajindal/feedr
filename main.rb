@@ -113,7 +113,7 @@ end
 
 post '/feed/create' do
   request_body = JSON.parse(request.body.read)
-  url, identifiers, title, link, description = request_body.values_at('url', 'identifiers', 'title', 'link', 'description')
+  url, identifiers, title, description = request_body.values_at('url', 'identifiers', 'title', 'description')
 end
 
 =begin
