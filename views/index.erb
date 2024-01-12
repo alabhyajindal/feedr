@@ -4,13 +4,13 @@
   <label>
     URL
     <br>
-    <input type='url' id='url' name='url'>
+    <input autocomplete='off' autofocus required type='url' id='url' name='url' value='https://plurrrr.com/'>
   </label>
 
   <br>
   <br>
 
-  <button id='load'>Load</button>
+  <button hx-post='/load' hx-target='#html' hx-trigger='click' hx-swap='outerHTML'>Load</button>
 
   <br>
   <br>
@@ -74,7 +74,7 @@
   <button id='create'>Create Feed</button>
 </section>
 
-<script>
+<!--<script>
   // Globals
   let URL = ''
 
@@ -170,3 +170,4 @@
     //return data
   })
 </script>
+-->

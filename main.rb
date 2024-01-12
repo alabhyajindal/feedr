@@ -64,14 +64,15 @@ get '/' do
 end
 
 post '/load' do
-  # send_file './test'
+  file = File.read('./test')
+  # request_body = JSON.parse(request.body.read)
+  # url = request_body.values_at('url')
 
-  request_body = JSON.parse(request.body.read)
-  url = request_body.values_at('url')
+  # response = HTTParty.get(url)
+  # html = response.body
 
-  response = HTTParty.get(url)
-  html = response.body
-  html
+  "<textarea autocomplete='off' readonly id='html' name='html' cols='70' rows='30'>#{file}</textarea>"
+
 end
 
 post '/extract' do
