@@ -64,14 +64,26 @@ get '/' do
 end
 
 post '/load' do
-  file = File.read('./test')
-  # request_body = JSON.parse(request.body.read)
-  # url = request_body.values_at('url')
+  # for testing
+  # html = File.read('./test')
 
-  # response = HTTParty.get(url)
-  # html = response.body
+  request_body = JSON.parse(request.body.read)
+  url = request_body.values_at('url')[0]
 
-  "<textarea autocomplete='off' readonly id='html' name='html' cols='70' rows='30'>#{file}</textarea>"
+  begin
+    response = HTTParty.get(url)
+  
+    if response.success?
+      html = response.body
+      "<textarea autocomplete='off' readonly id='html' name='html' cols='70' rows='30'>#{html}</textarea>"
+    else
+      "<textarea autocomplete='off' readonly id='html' name='html' cols='70' rows='30'>We are unable to download the HTML from your URL. Please try again later.</textarea>"
+    end
+  
+  rescue => e
+    "<textarea autocomplete='off' readonly id='html' name='html' cols='70' rows='30'>#{e.message}</textarea>"
+  end
+  
 
 end
 

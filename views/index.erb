@@ -1,18 +1,20 @@
 <h1>Feedr</h1>
 
 <section>
-  <label>
-    URL
+  <form hx-ext='json-enc' hx-post='/load' hx-target='#html' hx-trigger='submit' hx-swap='outerHTML'>
+    <label>
+      URL
+      <br>
+      <input autocomplete='off' autofocus required type='url' id='url' name='url' value='https://plurrrr.com/'>
+    </label>
+
     <br>
-    <input autocomplete='off' autofocus required type='url' id='url' name='url' value='https://plurrrr.com/'>
-  </label>
+    <br>
 
-  <br>
-  <br>
+    <button>Load</button>
 
-  <button hx-post='/load' hx-target='#html' hx-trigger='click' hx-swap='outerHTML'>Load</button>
+  </form>
 
-  <br>
   <br>
   <textarea autocomplete='off' readonly id='html' name='html' cols='70' rows='30'></textarea>
 
