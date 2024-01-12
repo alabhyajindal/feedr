@@ -24,9 +24,9 @@ require 'json'
 # end
 
 def extract_HTML(url, identifiers)
-  # response = HTTParty.get(url)
-  # html = response.body
-  html = File.read('./test')
+  response = HTTParty.get(url)
+  html = response.body
+  # html = File.read('./test')
   doc = Nokogiri::HTML(html)
 
   output = identifiers.map do |identifier|
@@ -63,13 +63,18 @@ get '/' do
   erb :index
 end
 
-get '/source/' do
-  send_file './test'
+post '/load' do
+  # send_file './test'
+
+  request_body = JSON.parse(request.body.read)
+  url = request_body.values_at('url')
+
+  response = HTTParty.get(url)
+  html = response.body
+  html
 end
 
 post '/extract' do
-  p request.body.read
-
   request_body = JSON.parse(request.body.read)
   url, identifiers = request_body.values_at('url', 'identifiers')
 

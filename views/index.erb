@@ -4,7 +4,7 @@
   <label>
     URL
     <br>
-    <input id='url' name='url'>
+    <input type='url' id='url' name='url'>
   </label>
 
   <br>
@@ -14,7 +14,7 @@
 
   <br>
   <br>
-  <textarea readonly id='html' name='html' cols='70' rows='30'></textarea>
+  <textarea autocomplete='off' readonly id='html' name='html' cols='70' rows='30'></textarea>
 
 </section>
 
@@ -36,7 +36,7 @@
   <br>
   <br>
 
-  <textarea readonly id='extractions' name='extractions' cols='70' rows='20'></textarea>
+  <textarea autocomplete='off' readonly id='extractions' name='extractions' cols='70' rows='20'></textarea>
 </section>
 
 <br>
@@ -76,7 +76,7 @@
 
 <script>
   // Globals
-  let URL = 'https://plurrrr.com/'
+  let URL = ''
 
   // HTML load
   const urlInput = document.getElementById('url')
@@ -85,7 +85,13 @@
   const extractions = document.getElementById('extractions')
 
   async function loadHTML(url) {
-    const res = await fetch(`/source/?url=${url}`)
+    const res = await fetch(`/load`,
+      {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json'},
+        body: JSON.stringify({url: url})
+      })
+
     const data = await res.text()
     return data
   }
@@ -94,7 +100,6 @@
     e.preventDefault()
     URL = encodeURI(urlInput.value)
     const html = await loadHTML(URL)
-
     htmlArea.value = html
   })
 
