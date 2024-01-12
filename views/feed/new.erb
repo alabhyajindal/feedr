@@ -1,11 +1,11 @@
-<h1>Feedr</h1>
+<h2>Add new feed</h2>
 
 <section>
   <form autocomplete='off' hx-ext='json-enc' hx-post='/load' hx-target='#html' hx-trigger='submit' hx-swap='outerHTML'>
     <label>
       URL
       <br>
-      <input autocomplete='off' autofocus required type='url' id='url' name='url' value='https://plurrrr.com/'>
+      <input autocomplete='off' autofocus required type='url' id='url' name='url'>
     </label>
 
     <br>
@@ -27,8 +27,7 @@
 
     <label>Enter item identifiers
       <br>
-      <textarea required id='identifiers' name='identifiers' cols='70' rows='7'>article h2
-article h2 a=href</textarea>
+      <textarea required id='identifiers' name='identifiers' cols='70' rows='7'></textarea>
 
     </label>
 
@@ -51,7 +50,7 @@ article h2 a=href</textarea>
     <label>
       Feed Title
       <br>
-      <input required id='feed_title' name='feed_title' value='my title'>
+      <input required id='feed_title' name='feed_title'>
     </label>
 
     <br>
@@ -60,7 +59,7 @@ article h2 a=href</textarea>
     <label>
       Feed Description
       <br>
-      <input required id='feed_description' name='feed_description' value='my description'>
+      <input required id='feed_description' name='feed_description'>
     </label>
 
     <br>

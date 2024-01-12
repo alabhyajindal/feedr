@@ -1,0 +1,72 @@
+<h2>Edit Feed</h2>
+
+<section>
+  <form autocomplete='off' hx-ext='json-enc' hx-post='/load' hx-target='#html' hx-trigger='submit' hx-swap='outerHTML'>
+    <label>
+      URL
+      <br>
+      <input autocomplete='off' autofocus required type='url' id='url' name='url' value='<%= feed["url"] %>'>
+    </label>
+
+    <br>
+    <br>
+
+    <button>Load</button>
+  </form>
+
+  <br>
+  <textarea readonly id='html' name='html' cols='70' rows='30'></textarea>
+
+</section>
+
+<br>
+<br>
+
+<section>
+  <form autocomplete='off' hx-ext='json-enc' hx-post='/extract' hx-target='#extractions' hx-trigger='submit' hx-swap='outerHTML' hx-include='#url'>
+
+    <label>Enter item identifiers
+      <br>
+      <textarea required id='identifiers' name='identifiers' cols='70' rows='7'><%= feed["identifiers"] %></textarea>
+
+    </label>
+
+    <br>
+    <br>
+
+    <button id='extract'>Extract</button>
+
+  </form>
+  <br>
+
+  <textarea readonly id='extractions' name='extractions' cols='70' rows='20'></textarea>
+</section>
+
+<br>
+<br>
+
+<section>
+  <form autocomplete='off' hx-ext='json-enc' hx-post='/feed/<%= feed["id"] %>/update' hx-trigger='submit' hx-include='#url, #identifiers'>
+    <label>
+      Feed Title
+      <br>
+      <input required id='feed_title' name='feed_title' value='<%= feed["title"] %>'>
+    </label>
+
+    <br>
+    <br>
+
+    <label>
+      Feed Description
+      <br>
+      <input required id='feed_description' name='feed_description' value='<%= feed["description"] %>'>
+    </label>
+
+    <br>
+    <br>
+
+    <button id='update'>Update Feed</button>
+  </form>
+</section>
+
+<div id='updated'></div>

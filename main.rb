@@ -6,6 +6,7 @@ require 'json'
 require 'sqlite3'
 
 DB = SQLite3::Database.new('feeds.db')
+DB.results_as_hash = true
 
 # items = doc.css('article').map do |item|
 #   title = CGI.escapeHTML(item.css('h2').text)
@@ -114,5 +115,38 @@ post '/feed/create' do
   # Save the data to the SQLite database
   DB.execute("INSERT INTO feeds (url, identifiers, title, description) VALUES (?, ?, ?, ?)", [url, identifiers, title, description])
 
-  "Data saved!"
+  "Feed saved!"
+end
+
+post '/feed/:id/update' do
+  feed_id = params['id']
+  request_body = JSON.parse(request.body.read)
+  url, identifiers, title, description = request_body.values_at('url', 'identifiers', 'feed_title', 'feed_description')
+
+  DB.execute("UPDATE feeds SET url = ?, identifiers = ?, title = ?, description = ? WHERE id = ?", [url, identifiers, title, description, feed_id])
+
+  "Feed updated!"
+end
+
+get '/feeds' do
+  DB.results_as_hash = true
+  feeds = DB.execute('SELECT * FROM feeds;')
+  content_type "text/html"
+  p feeds
+  erb :'feed/index', locals: { feeds: feeds }
+end
+
+get '/feed/:id/edit' do
+  feed_id = params['id']
+  feed = DB.execute('SELECT * FROM feeds WHERE id = ?', feed_id).first
+
+  if feed
+    erb :'feed/edit', locals: { feed: feed }
+  else
+    "Feed not found"
+  end
+end
+
+get '/feed/new' do
+  erb :'feed/new'
 end

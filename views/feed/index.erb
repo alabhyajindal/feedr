@@ -1,0 +1,13 @@
+<h2>Your feeds</h2>
+
+<ul>
+  <% feeds.each do |feed| %>
+    <li>
+      <a href="/feed/<%= feed['id'] %>/edit">
+        <%= feed['title'] %>
+      </a>
+    </li>
+  <% end %>
+</ul>
+
+<a href='/feed/new'>Create new feed</a>
