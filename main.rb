@@ -9,12 +9,11 @@ DB = SQLite3::Database.new('feeds.db')
 DB.results_as_hash = true
 
 def extract_HTML(url, identifiers)
-  
   lines = identifiers.split("\n")
 
   identifiers = lines.map do |line|
     element, attribute = line.split("=")
-    {element: element.strip, attribute: attribute ? attribute.strip : "text"}
+    { element: element.strip, attribute: attribute ? attribute.strip : "text" }
   end
 
   response = HTTParty.get(url)
@@ -34,12 +33,22 @@ def extract_HTML(url, identifiers)
     result = {}
 
     identifiers.each_with_index do |identifier, index|
-      result[:"value#{index + 1}"] = output[index][i]
+      case index
+      when 0
+        result[:title] = output[index][i]
+      when 1
+        result[:link] = output[index][i]
+      when 2
+        result[:description] = output[index][i]
+      else
+        result[:"value#{index + 1}"] = output[index][i]
+      end
     end
 
     result
   end
 end
+
 
 def pp_extracted_HTML(extractions) 
   pp_string = ''
