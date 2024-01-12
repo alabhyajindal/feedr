@@ -4,12 +4,6 @@ require 'sinatra'
 require 'cgi/util'
 require 'json'
 
-# response = HTTParty.get('https://plurrrr.com/')
-
-# html = response.body
-
-# doc = Nokogiri::HTML(html)
-
 # items = doc.css('article').map do |item|
 #   title = CGI.escapeHTML(item.css('h2').text)
 #   description = CGI.escapeHTML(item.css('blockquote p').text)
@@ -23,16 +17,15 @@ require 'json'
 #   erb :test, locals: { items: items }
 # end
 
+$html_response
+
 def extract_HTML(url, identifiers)
   # testing
-  html = File.read('./test')
+  # html = File.read('./test')
 
   # response = HTTParty.get(url)
   # html = response.body
-
-  doc = Nokogiri::HTML(html)
-
-  p identifiers
+  doc = Nokogiri::HTML($html_response)
 
   output = identifiers.map do |identifier|
     if identifier[:attribute] == 'text'
@@ -81,12 +74,11 @@ post '/load' do
   begin
     request_body = JSON.parse(request.body.read)
     url = request_body.values_at('url')[0]
-
     response = HTTParty.get(url)
   
     if response.success?
-      html = response.body
-      "<textarea autocomplete='off' readonly id='html' name='html' cols='70' rows='30'>#{html}</textarea>"
+      $html_response = response.body
+      "<textarea autocomplete='off' readonly id='html' name='html' cols='70' rows='30'>#{$html_response}</textarea>"
     else
       "<textarea autocomplete='off' readonly id='html' name='html' cols='70' rows='30'>We are unable to download the HTML from your URL. Please try again later.</textarea>"
     end
