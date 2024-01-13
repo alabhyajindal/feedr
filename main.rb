@@ -1,3 +1,4 @@
+require 'dotenv'
 require 'httparty'
 require 'nokogiri'
 require 'sinatra'
@@ -8,14 +9,16 @@ require 'jwt'
 require 'resend'
 
 # Config and secrets
+Dotenv.load
+
 DB = SQLite3::Database.new('feedr.db')
 DB.results_as_hash = true
 
-hmac_secret = '85oglfdmanbxjnvot95'
-Resend.api_key = "re_49xT7d1S_5w2ZaG4FpjG8UJVMsx9doE1w"
+hmac_secret = ENV['FEEDR_HMAC_SECRET']
+Resend.api_key = ENV['FEEDR_RESEND_API_KEY']
 
 enable :sessions
-set :session_secret, "70d8827c2ddd84bb54b249ed18706cc98d799f7712bade48c8652a067c407302fabd7d36d9daf90b107bde51843e7a2dc08cdbde2662e6816bd76c60bcd804b7"
+set :session_secret, ENV['FEEDR_SESSION_SECRET']
 
 # XML functions
 def extract_html(url, identifiers)
