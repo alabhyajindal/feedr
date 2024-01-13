@@ -4,9 +4,12 @@ require 'sinatra'
 require 'cgi/util'
 require 'json'
 require 'sqlite3'
+require 'jwt'
 
 DB = SQLite3::Database.new('feedr.db')
 DB.results_as_hash = true
+
+hmac_secret = '00lviy$9d93owkdkemvv90c3'
 
 # Helper functions
 
@@ -205,6 +208,11 @@ end
 post '/login' do
   request_body = JSON.parse(request.body.read)
   email = request_body.values_at('email')
-  puts email
+
+  payload = { email: email }
+
+  token = JWT.encode payload, hmac_secret, 'HS256'
+  puts token
+
   "<p><em>Check your email for the login link</em></p>"
 end
