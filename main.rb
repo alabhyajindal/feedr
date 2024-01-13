@@ -245,17 +245,23 @@ post '/login' do
 
   payload = { email: email, name: name }
   token = JWT.encode payload, hmac_secret, 'HS256'
-  puts token
+
+  login_link = "#{ENV['BASE_URL']}/login/#{token}"
 
   params = {
     from: 'Feedr <feedr@auratice.com>',
     to: [email],
     subject: 'Login to Feedr',
     html: "<p>Click on the following link to login to Feedr:</p>
-    <p><a href='#{ENV['BASE_URL']}/login/#{token}'>Login</a></p>",
+    <p><a href='#{login_link}'>Login</a></p>",
   }
 
-  Resend::Emails.send(params).to_hash.to_json
+  if ENV['APP_ENV'] == 'production'
+    Resend::Emails.send(params).to_hash.to_json
+  else
+    puts login_link
+  end
+
   "<p><em>Check your email for the login link</em></p>"
 end
 
