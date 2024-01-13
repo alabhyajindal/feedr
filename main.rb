@@ -192,7 +192,7 @@ get '/' do
   erb :index
 end
 
-get '/docs' do
-  @page_title = "Docs | Feedr"
-  erb :docs
+get '/guide' do
+  @page_title = "Guide | Feedr"
+  erb :guide
 end

@@ -8,6 +8,11 @@
     <style>
       body {
         font-family: sans-serif;
+        color:'#343a40'
+      }
+
+      a:active {
+        color: inherit;
       }
 
       header {
@@ -24,17 +29,23 @@
 
       .active-link {
         text-decoration: none;
-        color: black;
+        color: inherit;
+      }
+
+      #feedr-text {
+        text-decoration: none;
+        color: inherit;
       }
     </style>
 
   </head>
   <body>
     <header>
-      <h1>Feedr</h1>
+      <h1><a id='feedr-text' href='/'>Feedr</a></h1>
 
       <nav>
         <a href="/" class=<%= 'active-link' if request.path == '/' %>>Home</a>
+        <a href='/guide' class=<%= 'active-link' if request.path == '/guide' %>>Guide</a>
         <a href='/feeds' class=<%= 'active-link' if request.path == '/feeds' %>>My feeds</a>
     </nav>
     </header>
