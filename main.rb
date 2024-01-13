@@ -247,13 +247,19 @@ get '/login/:token' do
   redirect '/'
 end
 
+delete '/logout' do
+  session['user_id'] = nil
+  status 200
+  headers 'HX-Redirect' => '/'
+end
+
 def authenticate!
   user_id = session['user_id']
   redirect '/' unless user_id
 end
 
 helpers do
-  def active_link_class(link_path)
+  def is_active_link(link_path)
     'active-link' if request.path == link_path
   end
 

@@ -25,6 +25,12 @@
         margin-inline: 1em;
       }
 
+      nav > a {
+        text-decoration: underline;
+        color: inherit;
+        cursor: pointer;
+      }
+
       main {
         max-width: 600px;
         margin: 0 auto;
@@ -46,16 +52,20 @@
   <body>
     <header>
       <nav>
-        <h1><a id='feedr-text' href='/'><%= current_user['name'] %>'s Feedr</a></h1>
-
-        <a href="/" class="<%= active_link_class('/') %>">Home</a>
-        <a href='/guide' class="<%= active_link_class('/guide') %>">Guide</a>
         <% if current_user %>
-          <a href='/feeds' class="<%= active_link_class('/feeds') %>">My feeds</a>
-
-          <span>Logout</span>
+          <h1><a id='feedr-text' href='/'><%= current_user['name'] %>'s Feedr</a></h1>
         <% else %>
-          <a href='/login' class="<%= active_link_class('/login') %>">Login</a>
+          <h1><a id='feedr-text' href='/'>Feedr</a></h1>
+        <% end %>
+
+        <a href="/" class="<%= is_active_link('/') %>">Home</a>
+        <a href='/guide' class="<%= is_active_link('/guide') %>">Guide</a>
+        <% if current_user %>
+          <a href='/feeds' class="<%= is_active_link('/feeds') %>">My feeds</a>
+
+          <a hx-delete='/logout' hx-trigger='click'>Logout</a>
+        <% else %>
+          <a href='/login' class="<%= is_active_link('/login') %>">Login</a>
         <% end %>
       </nav>
     </header>
