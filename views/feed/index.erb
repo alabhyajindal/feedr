@@ -1,17 +1,15 @@
 <h2>My feeds</h2>
 
-<ul>
+<div id='feeds-cont'>
   <% feeds.each do |feed| %>
-    <li>
-      <a href="/feed/<%= feed['id'] %>">
-        <%= feed['feed_title'] %>
-      </a>
-      <a href="/feed/<%= feed['id'] %>/edit">
-        <button>Edit</button>
-      </a>
-      <button hx-delete='/feed/<%= feed['id'] %>/delete'>Delete</button>
-    </li>
+    <a href="/feed/<%= feed['id'] %>">
+      <%= feed['feed_title'] %>
+    </a>
+    <a href="/feed/<%= feed['id'] %>/edit">
+      <button>Edit</button>
+    </a>
+    <button hx-delete='/feed/<%= feed['id'] %>/delete'>Delete</button>
   <% end %>
-</ul>
+</div>
 
-<a href='/feed/new'>Add feed</a>
+<a href='/feed/new'>Add new feed</a>
