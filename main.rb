@@ -247,14 +247,15 @@ post '/login' do
   token = JWT.encode payload, hmac_secret, 'HS256'
   puts token
 
-  # params = {
-  #   from: 'Acme <onboarding@resend.dev>',
-  #   to: ['delivered@resend.dev'],
-  #   subject: 'hello world',
-  #   html: '<strong>it works!</strong>',
-  # }
+  params = {
+    from: 'Feedr <feedr@auratice.com>',
+    to: [email],
+    subject: 'Login to Feedr',
+    html: "<p>Click on the following link to login to Feedr:</p>
+    <p><a href='#{ENV['BASE_URL']}/login/#{token}'>Login</a></p>",
+  }
 
-  # Resend::Emails.send(params).to_hash.to_json
+  Resend::Emails.send(params).to_hash.to_json
   "<p><em>Check your email for the login link</em></p>"
 end
 
