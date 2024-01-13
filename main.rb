@@ -273,6 +273,10 @@ helpers do
     'active-link' if request.path == link_path
   end
 
+  def escape_html(string)
+    CGI.escapeHTML(string)
+  end
+
   def current_user
     user_id = session['user_id']
     if user_id

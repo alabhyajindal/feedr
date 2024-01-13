@@ -3,7 +3,7 @@
     <label>
       URL
       <br>
-      <input autocomplete='off' autofocus required type='url' id='url' name='url' value='<%= feed["url"] if feed %>'>
+      <input autocomplete='off' autofocus required type='url' id='url' name='url' value='<%= escape_html(feed["url"]) if feed %>'>
     </label>
 
     <br>
@@ -11,7 +11,7 @@
 
     <label>Enter item identifiers
       <br>
-      <textarea required id='identifiers' name='identifiers' cols='70' rows='3'><%= feed["identifiers"] if feed %></textarea>
+      <textarea required id='identifiers' name='identifiers' cols='70' rows='3'><%= escape_html(feed["identifiers"]) if feed %></textarea>
 
     </label>
 
@@ -45,7 +45,7 @@
     <label>
       Feed Title
       <br>
-      <input required id='feed_title' name='feed_title' value='<%= feed["feed_title"] if feed %>'>
+      <input required id='feed_title' name='feed_title' value='<%= escape_html(feed["feed_title"]) if feed %>'>
     </label>
 
     <br>
@@ -54,7 +54,7 @@
     <label>
       Feed Link
       <br>
-      <input type='url' required id='feed_link' name='feed_link' value='<%= feed["feed_link"] if feed %>'>
+      <input type='url' required id='feed_link' name='feed_link' value='<%= escape_html(feed["feed_link"]) if feed %>'>
     </label>
 
     <br>
@@ -63,7 +63,7 @@
     <label>
       Feed Description
       <br>
-      <textarea required id='feed_description' name='feed_description' rows='4' cols='70'><%= feed["feed_description"] if feed %></textarea>
+      <textarea required id='feed_description' name='feed_description' rows='4' cols='70'><%= escape_html(feed["feed_description"]) if feed %></textarea>
     </label>
 
     <br>
