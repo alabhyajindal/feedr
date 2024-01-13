@@ -4,22 +4,46 @@
     <title><%= @page_title || "Feedr" %></title>
     <script src="https://unpkg.com/htmx.org@1.9.10" integrity="sha384-D1Kt99CQMDuVetoL1lrYwg5t+9QdHe7NLX/SoJYkXDFfX37iInKRy5xLSi8nO7UC" crossorigin="anonymous"></script>
     <script src="https://unpkg.com/htmx.org/dist/ext/json-enc.js"></script>
+
+    <style>
+      body {
+        font-family: sans-serif;
+      }
+
+      header {
+        display: flex;
+        align-items: center;
+        justify-content: start;
+        gap: 3em;
+      }
+
+      nav {
+        display: flex;
+        gap: 2em;
+      }
+
+      .active-link {
+        text-decoration: none;
+        color: black;
+      }
+    </style>
+
   </head>
   <body>
     <header>
       <h1>Feedr</h1>
+
+      <nav>
+        <a href="/" class=<%= 'active-link' if request.path == '/' %>>Home</a>
+        <a href='/feeds' class=<%= 'active-link' if request.path == '/feeds' %>>My feeds</a>
+    </nav>
     </header>
 
-    <nav>
-      <ul>
-        <li><a href="/">Home</a></li>
-        <li><a href='/feeds'>My feeds</a></li>
-      </ul>
-    </nav>
+    
 
     <main>
       <%= yield %>
     </main>
 
-  </body>
-</html>
+        </body>
+      </html>
