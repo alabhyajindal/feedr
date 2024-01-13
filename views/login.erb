@@ -1,0 +1,16 @@
+<h2>Login</h2>
+
+<form hx-post='/login' hx-ext='json-enc' hx-target='this' hx-swap='innerHTML'>
+  <label for="email">Email</label>
+  <br>
+  <br>
+  <input type="email" id="email" name="email" required>
+
+  <br>
+  <br>
+  <button type="submit">Submit</button>
+
+  <p>
+    <em id='login-result'>You will recieve the login link on your email</em>
+  </p>
+</form>

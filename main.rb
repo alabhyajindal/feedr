@@ -196,3 +196,15 @@ get '/guide' do
   @page_title = "Guide | Feedr"
   erb :guide
 end
+
+get '/login' do
+  @page_title = 'Login | Feedr'
+  erb :login
+end
+
+post '/login' do
+  request_body = JSON.parse(request.body.read)
+  email = request_body.values_at('email')
+  puts email
+  "<p><em>Check your email for the login link</em></p>"
+end
