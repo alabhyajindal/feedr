@@ -1,5 +1,3 @@
-<h2>Edit Feed</h2>
-
 <section>
   <form autocomplete='off' hx-ext='json-enc' hx-post='/extract' hx-target='#extractions' hx-trigger='submit' hx-swap='outerHTML'>
     <label>
@@ -13,7 +11,7 @@
 
     <label>Enter item identifiers
       <br>
-      <textarea required id='identifiers' name='identifiers' cols='70' rows='7'><%= feed["identifiers"] %></textarea>
+      <textarea required id='identifiers' name='identifiers' cols='70' rows='3'><%= feed["identifiers"] %></textarea>
 
     </label>
 
@@ -27,7 +25,7 @@
   </form>
   <br>
 
-  <textarea placeholder='Preview' readonly id='extractions' name='extractions' cols='70' rows='20'></textarea>
+  <textarea readonly id='extractions' name='extractions' cols='70' rows='10'></textarea>
 </section>
 
 <br>
@@ -56,7 +54,7 @@
     <label>
       Feed Description
       <br>
-      <input required id='feed_description' name='feed_description' value='<%= feed["feed_description"] %>'>
+      <textarea required id='feed_description' name='feed_description' rows='4' cols='70'><%= feed["feed_description"] %></textarea>
     </label>
 
     <br>

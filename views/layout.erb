@@ -24,9 +24,6 @@
         display: flex;
         align-items: center;
         justify-content: space-between;
-        gap: 3em;
-        margin-inline: 1em;
-        font-size: larger;
         max-width: 800px;
         margin: 0 auto;
       }
@@ -42,6 +39,7 @@
         margin: 0 auto;
         margin-top: 4em;
         margin-bottom: 2em;
+        padding-inline: 2em;
       }
 
       #feeds-cont {
@@ -61,11 +59,23 @@
       .active-link {
         text-decoration: none;
         color: inherit;
+        font-weight: 700;
       }
 
       #feedr-text {
         text-decoration: none;
         color: inherit;
+      }
+
+      @media (max-width: 600px) {
+        #feedr-text-cont {
+          display: none;
+        }
+
+        nav {
+          padding-block: 2em;
+          padding-inline: 1em;
+        }
       }
     </style>
 
@@ -73,11 +83,13 @@
   <body>
     <header>
       <nav>
-        <% if current_user %>
-          <h1><a id='feedr-text' href='/'><%= current_user['name'] %>'s Feedr</a></h1>
-        <% else %>
-          <h1><a id='feedr-text' href='/'>Feedr</a></h1>
-        <% end %>
+        <div id='feedr-text-cont'>
+          <% if current_user %>
+            <h1><a id='feedr-text' href='/'><%= current_user['name'] %>'s Feedr</a></h1>
+          <% else %>
+            <h1><a id='feedr-text' href='/'>Feedr</a></h1>
+          <% end %>
+        </div>
 
         <a href="/" class="<%= is_active_link('/') %>">Home</a>
         <a href='/guide' class="<%= is_active_link('/guide') %>">Guide</a>
