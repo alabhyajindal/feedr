@@ -100,7 +100,7 @@ def handle_feed(action, request_body, feed_id = nil)
   when 'create'
     DB.execute("INSERT INTO feeds (url, identifiers, feed_title, feed_link, feed_description, user_id) VALUES (?, ?, ?, ?, ?, ?)", [url, identifiers, feed_title, feed_link, feed_description, user_id])
   when 'update'
-    DB.execute("UPDATE feeds SET url = ?, identifiers = ?, feed_title = ?, feed_link = ?, feed_description, user_id = ? WHERE id = ?", [url, identifiers, feed_title, feed_link, feed_description, user_id, feed_id])
+    DB.execute("UPDATE feeds SET url = ?, identifiers = ?, feed_title = ?, feed_link = ?, feed_description = ?, user_id = ? WHERE id = ?", [url, identifiers, feed_title, feed_link, feed_description, user_id, feed_id])
   end
 
   status 200
@@ -231,7 +231,7 @@ get '/login/:token' do
   end
 
   session['user_id'] = user_id
-  redirect '/'
+  redirect '/feeds'
 end
 
 # Post (user management)

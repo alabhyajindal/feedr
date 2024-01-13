@@ -8,21 +8,27 @@
     <style>
       body {
         font-family: sans-serif;
-        color:'#343a40';
-        max-width: 800px;
-        margin: 0 auto;
+        color: #334155;
       }
 
       a:active {
         color: inherit;
       }
 
+      header {
+        background-color: #f9a8d4;
+      }
+
       nav {
+        color: #1e293b;
         display: flex;
         align-items: center;
         justify-content: space-between;
         gap: 3em;
         margin-inline: 1em;
+        font-size: larger;
+        max-width: 800px;
+        margin: 0 auto;
       }
 
       nav > a {
@@ -32,9 +38,16 @@
       }
 
       main {
-        max-width: 600px;
+        max-width: 800px;
         margin: 0 auto;
         margin-top: 4em;
+        margin-bottom: 2em;
+      }
+
+      .guide-screenshot {
+        margin-block: 2em;
+        max-width: 100%;
+        object-fit: cover;
       }
 
       .active-link {

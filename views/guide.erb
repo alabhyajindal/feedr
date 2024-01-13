@@ -16,7 +16,43 @@
 
 <h3>Listing elements</h3>
 
-<p>Following are the steps you can take to create a XML for a site. The XML will be hosted on Feedr's servers, which you can then add to your RSS aggregator.</p>
+<p>Visit the website you want XML for. Find the HTML tags of the elements for title, link and description, in this order.</p>
+
+<img src='/guide_1.png' class='guide-screenshot'></img>
+
+<p>On Plurrrr, we can see that the title, link and description are nested in the article tag.</p>
+<p>Nested elements are specified using spaces on Feedr. By default an element's text is extracted, but if you want you can specify an attribute using the = operator.</p>
+
+<p>For Plurrrr, the title, link and description's identifiers will be:
+  <pre><code>
+    article h2
+    article p a=href
+    article blockquote p
+  </code></pre>
+
+  Notice the equal operator to specify that the href attribute of the nested a element should be extracted.
+</p>
+
+<p>Log in to Feedr. You'll be greeted by the <em>My feeds</em> section.</p>
+<p>Click on the <em>Add feed</em> button. Specify the URL and the previously noted identifiers</p>
+
+<img src='/guide_2.png' class='guide-screenshot'></img>
+
+<p>Click on the <em>Extract</em> button. Verify that the extracted text and the order in which they appear is correct.</p>
+
+<p>Enter feed title, link and description.</p>
+
+<img src='/guide_3.png' class='guide-screenshot'></img>
+
+<p>Click on the <em>Add Feed</em> button. You will be redirect to your feeds. Here you'll notice a new entry has beeen created for your website. Click on it to get it's XML.</p>
+
+<img src='/guide_4.png' class='guide-screenshot'></img>
+
+<p>Copy the URL of the generated XML and add it to your RSS feed application. That's it!</p>
+
+<img src='/guide_5.png' class='guide-screenshot'></img>
+
+<!--<p>Following are the steps you can take to create a XML for a site. The XML will be hosted on Feedr's servers, which you can then add to your RSS aggregator.</p>
 
 <ol>
   <li>Visit the website you want to edit. Right click on the page, and select "view source". This will show you the initial HTML response by the website's server. Do not use the browser's devtools because it shows HTML which might have been modified by client side JavaScript.</li>
@@ -71,4 +107,4 @@
 
   <li>You can now copy the URL of this XML page and add it your RSS aggregator.</li>
 
-</od>
+</od>-->
