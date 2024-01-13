@@ -5,7 +5,7 @@ require 'cgi/util'
 require 'json'
 require 'sqlite3'
 
-DB = SQLite3::Database.new('feeds.db')
+DB = SQLite3::Database.new('feedr.db')
 DB.results_as_hash = true
 
 # Helper functions
@@ -61,12 +61,12 @@ def pp_extracted_html(extractions)
   pp_string
 end
 
-def generate_xml(url, extractions, feed_title, feed_description)
+def generate_xml(url, extractions, feed_title, feed_link, feed_description)
   builder = Nokogiri::XML::Builder.new(encoding: 'UTF-8') do |xml|
     xml.rss(version: '2.0') do
       xml.channel do
         xml.title feed_title
-        xml.link url
+        xml.link feed_link
         xml.description feed_description
 
         extractions.each do |e|
@@ -93,12 +93,9 @@ end
 
 post '/feed/create' do
   request_body = JSON.parse(request.body.read)
-  url, identifiers, title, description = request_body.values_at('url', 'identifiers', 'feed_title', 'feed_description')
+  url, identifiers, feed_title, feed_link, feed_description = request_body.values_at('url', 'identifiers', 'feed_title', 'feed_link', 'feed_description')
 
-  extractions = extract_html(url, identifiers)
-  xml_data = generate_xml(url, extractions, title, description)
-
-  DB.execute("INSERT INTO feeds (url, identifiers, title, description, xml_data) VALUES (?, ?, ?, ?, ?)", [url, identifiers, title, description, xml_data])
+  DB.execute("INSERT INTO feeds (url, identifiers, feed_title, feed_link, feed_description) VALUES (?, ?, ?, ?, ?)", [url, identifiers, feed_title, feed_link, feed_description])
 
   status 200
   headers 'HX-Redirect' => '/feeds'
@@ -107,12 +104,9 @@ end
 post '/feed/:id/update' do
   feed_id = params['id']
   request_body = JSON.parse(request.body.read)
-  url, identifiers, title, description = request_body.values_at('url', 'identifiers', 'feed_title', 'feed_description')
+  url, identifiers, feed_title, feed_link, feed_description = request_body.values_at('url', 'identifiers', 'feed_title', 'feed_link', 'feed_description')
 
-  extractions = extract_html(url, identifiers)
-  xml_data = generate_xml(url, extractions, title, description)
-
-  DB.execute("UPDATE feeds SET url = ?, identifiers = ?, title = ?, description = ?, xml_data =? WHERE id = ?", [url, identifiers, title, description, xml_data, feed_id])
+  DB.execute("UPDATE feeds SET url = ?, identifiers = ?, feed_title = ?, feed_link = ?, feed_description = ? WHERE id = ?", [url, identifiers, feed_title, feed_link, feed_description, feed_id])
 
   status 200
   headers 'HX-Redirect' => '/feeds'
@@ -153,12 +147,11 @@ get '/feed/:id' do
   feed_id = params['id']
   feed = DB.execute('SELECT * FROM feeds WHERE id = ?', feed_id).first
   if feed
-    url, identifiers, title, description = feed.values_at('url', 'identifiers', 'feed_title', 'feed_description')
+    url, identifiers, feed_title, feed_link, feed_description = feed.values_at('url', 'identifiers', 'feed_title', 'feed_link', 'feed_description')
 
     extractions = extract_html(url, identifiers)
-    xml_data = generate_xml(url, extractions, title, description)
+    xml_data = generate_xml(url, extractions, feed_title, feed_link, feed_description)
 
-    # xml_data = feed.values_at('xml_data')
     content_type 'application/xml'
     xml_data
   else
