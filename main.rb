@@ -12,6 +12,7 @@ DB.results_as_hash = true
 
 hmac_secret = '85oglfdmanbxjnvot95'
 Resend.api_key = "re_49xT7d1S_5w2ZaG4FpjG8UJVMsx9doE1w"
+enable :sessions
 
 
 # Helper functions
@@ -213,14 +214,8 @@ post '/login' do
   email = request_body.values_at('email')
 
   payload = { email: email }
-
-  puts ENV['feedr_hmac_secret']
-
   token = JWT.encode payload, hmac_secret, 'HS256'
   puts token
-
-  decoded_token = JWT.decode token, hmac_secret, true, { algorithm: 'HS256' }
-  puts decoded_token
 
   params = {
     from: 'Acme <onboarding@resend.dev>',
@@ -231,4 +226,22 @@ post '/login' do
 
   Resend::Emails.send(params).to_hash.to_json
   "<p><em>Check your email for the login link</em></p>"
+end
+
+get '/login/:token' do
+  token = params[:token]
+  decoded_token = JWT.decode(token, hmac_secret, true, { algorithm: 'HS256' })
+  email = decoded_token[0]['email']
+
+  user = DB.execute("SELECT id FROM Users WHERE email = ?", [email]).first
+
+  if user.nil?
+    DB.execute("INSERT INTO Users (email) VALUES (?)", [email])
+    user_id = DB.last_insert_row_id
+  else
+    user_id = user['id']
+  end
+
+  puts "User ID: #{user_id}"
+  session['user_id'] = user_id
 end
