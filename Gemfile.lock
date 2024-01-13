@@ -20,6 +20,8 @@ GEM
     rack-protection (3.2.0)
       base64 (>= 0.1.0)
       rack (~> 2.2, >= 2.2.4)
+    resend (0.9.0)
+      httparty (>= 0.19.1)
     ruby2_keywords (0.0.5)
     sinatra (3.2.0)
       mustermann (~> 3.0)
@@ -37,6 +39,7 @@ DEPENDENCIES
   jwt
   nokogiri
   puma
+  resend
   sinatra
   sqlite3
 

@@ -5,11 +5,14 @@ require 'cgi/util'
 require 'json'
 require 'sqlite3'
 require 'jwt'
+require 'resend'
 
 DB = SQLite3::Database.new('feedr.db')
 DB.results_as_hash = true
 
-hmac_secret = '00lviy$9d93owkdkemvv90c3'
+hmac_secret = '85oglfdmanbxjnvot95'
+Resend.api_key = "re_49xT7d1S_5w2ZaG4FpjG8UJVMsx9doE1w"
+
 
 # Helper functions
 
@@ -211,8 +214,21 @@ post '/login' do
 
   payload = { email: email }
 
+  puts ENV['feedr_hmac_secret']
+
   token = JWT.encode payload, hmac_secret, 'HS256'
   puts token
 
+  decoded_token = JWT.decode token, hmac_secret, true, { algorithm: 'HS256' }
+  puts decoded_token
+
+  params = {
+    from: 'Acme <onboarding@resend.dev>',
+    to: ['delivered@resend.dev'],
+    subject: 'hello world',
+    html: '<strong>it works!</strong>',
+  }
+
+  Resend::Emails.send(params).to_hash.to_json
   "<p><em>Check your email for the login link</em></p>"
 end
