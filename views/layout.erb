@@ -1,9 +1,25 @@
-<script src="https://unpkg.com/htmx.org@1.9.10" integrity="sha384-D1Kt99CQMDuVetoL1lrYwg5t+9QdHe7NLX/SoJYkXDFfX37iInKRy5xLSi8nO7UC" crossorigin="anonymous"></script>
+<!DOCTYPE html>
+<html>
+  <head>
+    <title><%= @page_title || "Feedr" %></title>
+    <script src="https://unpkg.com/htmx.org@1.9.10" integrity="sha384-D1Kt99CQMDuVetoL1lrYwg5t+9QdHe7NLX/SoJYkXDFfX37iInKRy5xLSi8nO7UC" crossorigin="anonymous"></script>
+    <script src="https://unpkg.com/htmx.org/dist/ext/json-enc.js"></script>
+  </head>
+  <body>
+    <header>
+      <h1>Feedr</h1>
+    </header>
 
-<script src="https://unpkg.com/htmx.org/dist/ext/json-enc.js"></script>
+    <nav>
+      <ul>
+        <li><a href="/">Home</a></li>
+        <li><a href='/feeds'>My feeds</a></li>
+      </ul>
+    </nav>
 
-<h1><a href='/feeds'>Feedr</a></h1>
+    <main>
+      <%= yield %>
+    </main>
 
-<main>
-  <%= yield %>
-</main>
+  </body>
+</html>

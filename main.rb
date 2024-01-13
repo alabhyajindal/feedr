@@ -129,11 +129,15 @@ end
 # Feed actions, index, edit and new
 
 get '/feeds' do
+  @page_title = "My feeds | Feedr"
+
   feeds = DB.execute('SELECT * FROM feeds;')
   erb :'feed/index', locals: { feeds: feeds }
 end
 
 get '/feed/:id/edit' do
+  @page_title = "Edit feed | Feedr"
+
   feed_id = params['id']
   feed = DB.execute('SELECT * FROM feeds WHERE id = ?', feed_id).first
 
@@ -145,6 +149,7 @@ get '/feed/:id/edit' do
 end
 
 get '/feed/new' do
+  @page_title = "Add feed | Feedr"
   erb :'feed/new'
 end
 
@@ -188,5 +193,6 @@ get '/' do
 end
 
 get '/docs' do
+  @page_title = "Docs | Feedr"
   erb :docs
 end
