@@ -94,12 +94,13 @@ end
 
 def handle_feed(action, request_body, feed_id = nil)
   url, identifiers, feed_title, feed_link, feed_description = request_body.values_at('url', 'identifiers', 'feed_title', 'feed_link', 'feed_description')
+  user_id = current_user['id']
 
   case action
   when 'create'
-    DB.execute("INSERT INTO feeds (url, identifiers, feed_title, feed_link, feed_description) VALUES (?, ?, ?, ?, ?)", [url, identifiers, feed_title, feed_link, feed_description])
+    DB.execute("INSERT INTO feeds (url, identifiers, feed_title, feed_link, feed_description, user_id) VALUES (?, ?, ?, ?, ?, ?)", [url, identifiers, feed_title, feed_link, feed_description, user_id])
   when 'update'
-    DB.execute("UPDATE feeds SET url = ?, identifiers = ?, feed_title = ?, feed_link = ?, feed_description = ? WHERE id = ?", [url, identifiers, feed_title, feed_link, feed_description, feed_id])
+    DB.execute("UPDATE feeds SET url = ?, identifiers = ?, feed_title = ?, feed_link = ?, feed_description, user_id = ? WHERE id = ?", [url, identifiers, feed_title, feed_link, feed_description, user_id, feed_id])
   end
 
   status 200
@@ -109,17 +110,19 @@ end
 # GET feeds
 
 get '/feeds' do
+  authenticate!
   @page_title = "My feeds | Feedr"
 
-  feeds = DB.execute('SELECT * FROM feeds;')
+  feeds = DB.execute('SELECT * FROM feeds WHERE user_id = ?', current_user['id'])
   erb :'feed/index', locals: { feeds: feeds }
 end
 
 get '/feed/:id/edit' do
+  authenticate!
   @page_title = "Edit feed | Feedr"
 
   feed_id = params['id']
-  feed = DB.execute('SELECT * FROM feeds WHERE id = ?', feed_id).first
+  feed = DB.execute('SELECT * FROM feeds WHERE id = ? AND user_id = ?', [feed_id, current_user['id']]).first
 
   if feed
     erb :'feed/edit', locals: { feed: feed }
@@ -129,6 +132,7 @@ get '/feed/:id/edit' do
 end
 
 get '/feed/new' do
+  authenticate!
   @page_title = "Add feed | Feedr"
   erb :'feed/new'
 end
@@ -152,12 +156,14 @@ end
 # Post (feeds)
 
 post '/feed/create' do
+  authenticate!
   feed_id = params['id']
   request_body = JSON.parse(request.body.read)
   handle_feed('create', request_body)
 end
 
 post '/feed/:id/update' do
+  authenticate!
   feed_id = params['id']
   request_body = JSON.parse(request.body.read)
   handle_feed('update', request_body, feed_id)
@@ -166,6 +172,7 @@ end
 # Delete (feeds)
 
 delete '/feed/:id/delete' do
+  authenticate!
   feed_id = params['id']
   DB.execute("DELETE FROM feeds WHERE id = ?", feed_id)
 
@@ -174,6 +181,7 @@ delete '/feed/:id/delete' do
 end
 
 post '/extract' do
+  authenticate!
   begin
     request_body = JSON.parse(request.body.read)
     url, identifiers = request_body.values_at('url', 'identifiers')
