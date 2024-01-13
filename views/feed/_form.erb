@@ -1,0 +1,72 @@
+<section>
+  <form autocomplete='off' hx-ext='json-enc' hx-post='/extract' hx-target='#extractions' hx-trigger='submit' hx-swap='outerHTML'>
+    <label>
+      URL
+      <br>
+      <input autocomplete='off' autofocus required type='url' id='url' name='url' value='<%= feed["url"] if feed %>'>
+    </label>
+
+    <br>
+    <br>
+
+    <label>Enter item identifiers
+      <br>
+      <textarea required id='identifiers' name='identifiers' cols='70' rows='3'><%= feed["identifiers"] if feed %></textarea>
+
+    </label>
+
+    <% if feed %>
+      <br>
+      <br>
+    <% else %>
+      <p><em>Max 3 identifiers, in the order of title, link and description.</em>See the <a href='/guide'>guide </a> for more information.</p>
+      <br>
+    <% end %>
+
+    <button id='extract' hx-indicator='#spinner'>
+      Extract
+    </button>
+
+  </form>
+  <br>
+
+  <textarea readonly id='extractions' name='extractions' cols='70' rows='10'></textarea>
+</section>
+
+<br>
+<br>
+
+<section>
+  <form autocomplete='off' hx-ext='json-enc' hx-post=<%= feed ? '/feed/feed["id"]/update' : '/feed/create' %> hx-trigger='submit' hx-include='#url, #identifiers'>
+    <label>
+      Feed Title
+      <br>
+      <input required id='feed_title' name='feed_title' value='<%= feed["feed_title"] if feed %>'>
+    </label>
+
+    <br>
+    <br>
+
+    <label>
+      Feed Link
+      <br>
+      <input type='url' required id='feed_link' name='feed_link' value='<%= feed["feed_link"] if feed %>'>
+    </label>
+
+    <br>
+    <br>
+
+    <label>
+      Feed Description
+      <br>
+      <textarea required id='feed_description' name='feed_description' rows='4' cols='70'><%= feed["feed_description"] if feed %></textarea>
+    </label>
+
+    <br>
+    <br>
+
+    <button>
+      <%= feed ? "Update Feed" : "Add Feed" %>
+    </button>
+  </form>
+</section>
