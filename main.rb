@@ -7,6 +7,7 @@ require 'sqlite3'
 require 'jwt'
 require 'resend'
 
+# Config and secrets
 DB = SQLite3::Database.new('feedr.db')
 DB.results_as_hash = true
 
@@ -16,8 +17,7 @@ Resend.api_key = "re_49xT7d1S_5w2ZaG4FpjG8UJVMsx9doE1w"
 enable :sessions
 set :session_secret, "70d8827c2ddd84bb54b249ed18706cc98d799f7712bade48c8652a067c407302fabd7d36d9daf90b107bde51843e7a2dc08cdbde2662e6816bd76c60bcd804b7"
 
-# Helper functions
-
+# XML functions
 def extract_html(url, identifiers)
   lines = identifiers.split("\n")
 
@@ -91,13 +91,6 @@ def generate_xml(url, extractions, feed_title, feed_link, feed_description)
   builder.to_xml
 end
 
-# extractions = extract_html('https://plurrrr.com/', "article h2\narticle h2 a=href")
-# my_xml = generate_xml('https://plurrrr.com/', extractions, 'my title', 'my desc')
-# puts my_xml
-
-
-# Routes
-# Feed actions, create, update and delete
 
 def handle_feed(action, request_body, feed_id = nil)
   url, identifiers, feed_title, feed_link, feed_description = request_body.values_at('url', 'identifiers', 'feed_title', 'feed_link', 'feed_description')
@@ -113,28 +106,7 @@ def handle_feed(action, request_body, feed_id = nil)
   headers 'HX-Redirect' => '/feeds'
 end
 
-post '/feed/create' do
-  feed_id = params['id']
-  request_body = JSON.parse(request.body.read)
-  handle_feed('create', request_body)
-end
-
-post '/feed/:id/update' do
-  feed_id = params['id']
-  request_body = JSON.parse(request.body.read)
-  handle_feed('update', request_body, feed_id)
-end
-
-delete '/feed/:id/delete' do
-  feed_id = params['id']
-
-  DB.execute("DELETE FROM feeds WHERE id = ?", feed_id)
-
-  status 200
-  headers 'HX-Redirect' => '/feeds'
-end
-
-# Feed actions, index, edit and new
+# GET feeds
 
 get '/feeds' do
   @page_title = "My feeds | Feedr"
@@ -177,7 +149,29 @@ get '/feed/:id' do
   end
 end
 
-# Actions
+# Post (feeds)
+
+post '/feed/create' do
+  feed_id = params['id']
+  request_body = JSON.parse(request.body.read)
+  handle_feed('create', request_body)
+end
+
+post '/feed/:id/update' do
+  feed_id = params['id']
+  request_body = JSON.parse(request.body.read)
+  handle_feed('update', request_body, feed_id)
+end
+
+# Delete (feeds)
+
+delete '/feed/:id/delete' do
+  feed_id = params['id']
+  DB.execute("DELETE FROM feeds WHERE id = ?", feed_id)
+
+  status 200
+  headers 'HX-Redirect' => '/feeds'
+end
 
 post '/extract' do
   begin
@@ -194,7 +188,8 @@ post '/extract' do
   end
 end
 
-# Others
+
+# Get (pages)
 
 get '/' do
   erb :index
@@ -205,10 +200,33 @@ get '/guide' do
   erb :guide
 end
 
+# Get (user management)
+
 get '/login' do
+  redirect '/' if current_user
   @page_title = 'Login | Feedr'
   erb :login
 end
+
+get '/login/:token' do
+  token = params[:token]
+  decoded_token = JWT.decode(token, hmac_secret, true, { algorithm: 'HS256' })
+  email, name = decoded_token[0].values_at('email', 'name')
+
+  user = DB.execute("SELECT id FROM Users WHERE email = ?", [email]).first
+
+  if user.nil?
+    DB.execute("INSERT INTO Users (email, name) VALUES (?, ?)", [email, name])
+    user_id = DB.last_insert_row_id
+  else
+    user_id = user['id']
+  end
+
+  session['user_id'] = user_id
+  redirect '/'
+end
+
+# Post (user management)
 
 post '/login' do
   request_body = JSON.parse(request.body.read)
@@ -229,23 +247,7 @@ post '/login' do
   "<p><em>Check your email for the login link</em></p>"
 end
 
-get '/login/:token' do
-  token = params[:token]
-  decoded_token = JWT.decode(token, hmac_secret, true, { algorithm: 'HS256' })
-  email, name = decoded_token[0].values_at('email', 'name')
-
-  user = DB.execute("SELECT id FROM Users WHERE email = ?", [email]).first
-
-  if user.nil?
-    DB.execute("INSERT INTO Users (email, name) VALUES (?, ?)", [email, name])
-    user_id = DB.last_insert_row_id
-  else
-    user_id = user['id']
-  end
-
-  session['user_id'] = user_id
-  redirect '/'
-end
+# Delete (user management)
 
 delete '/logout' do
   session['user_id'] = nil
