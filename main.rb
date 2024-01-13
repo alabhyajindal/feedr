@@ -125,7 +125,7 @@ get '/feed/:id/edit' do
   feed = DB.execute('SELECT * FROM feeds WHERE id = ? AND user_id = ?', [feed_id, current_user['id']]).first
 
   if feed
-    erb :'feed/edit', locals: { feed: feed }
+    erb :'feed/_form', locals: { feed: feed }
   else
     "Feed not found"
   end
@@ -134,7 +134,7 @@ end
 get '/feed/new' do
   authenticate!
   @page_title = "Add feed | Feedr"
-  erb :'feed/new'
+  erb :'feed/_form', locals: { feed: nil }
 end
 
 get '/feed/:id' do

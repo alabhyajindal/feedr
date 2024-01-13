@@ -37,7 +37,11 @@
 <br>
 
 <section>
-  <form autocomplete='off' hx-ext='json-enc' hx-post=<%= feed ? '/feed/feed["id"]/update' : '/feed/create' %> hx-trigger='submit' hx-include='#url, #identifiers'>
+  <form 
+  autocomplete='off' 
+  hx-ext='json-enc' 
+  hx-post=<%= feed ? "/feed/#{feed['id']}/update" : '/feed/create' %> hx-trigger='submit' 
+  hx-include='#url, #identifiers'>
     <label>
       Feed Title
       <br>
