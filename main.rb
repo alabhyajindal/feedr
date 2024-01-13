@@ -91,25 +91,30 @@ end
 # Routes
 # Feed actions, create, update and delete
 
-post '/feed/create' do
-  request_body = JSON.parse(request.body.read)
+def handle_feed(action, request_body, feed_id = nil)
   url, identifiers, feed_title, feed_link, feed_description = request_body.values_at('url', 'identifiers', 'feed_title', 'feed_link', 'feed_description')
 
-  DB.execute("INSERT INTO feeds (url, identifiers, feed_title, feed_link, feed_description) VALUES (?, ?, ?, ?, ?)", [url, identifiers, feed_title, feed_link, feed_description])
+  case action
+  when 'create'
+    DB.execute("INSERT INTO feeds (url, identifiers, feed_title, feed_link, feed_description) VALUES (?, ?, ?, ?, ?)", [url, identifiers, feed_title, feed_link, feed_description])
+  when 'update'
+    DB.execute("UPDATE feeds SET url = ?, identifiers = ?, feed_title = ?, feed_link = ?, feed_description = ? WHERE id = ?", [url, identifiers, feed_title, feed_link, feed_description, feed_id])
+  end
 
   status 200
   headers 'HX-Redirect' => '/feeds'
 end
 
+post '/feed/create' do
+  feed_id = params['id']
+  request_body = JSON.parse(request.body.read)
+  handle_feed('create', request_body)
+end
+
 post '/feed/:id/update' do
   feed_id = params['id']
   request_body = JSON.parse(request.body.read)
-  url, identifiers, feed_title, feed_link, feed_description = request_body.values_at('url', 'identifiers', 'feed_title', 'feed_link', 'feed_description')
-
-  DB.execute("UPDATE feeds SET url = ?, identifiers = ?, feed_title = ?, feed_link = ?, feed_description = ? WHERE id = ?", [url, identifiers, feed_title, feed_link, feed_description, feed_id])
-
-  status 200
-  headers 'HX-Redirect' => '/feeds'
+  handle_feed('update', request_body, feed_id)
 end
 
 delete '/feed/:id/delete' do

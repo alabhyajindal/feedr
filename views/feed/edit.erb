@@ -39,7 +39,16 @@
     <label>
       Feed Title
       <br>
-      <input required id='feed_title' name='feed_title' value='<%= feed["title"] %>'>
+      <input required id='feed_title' name='feed_title' value='<%= feed["feed_title"] %>'>
+    </label>
+
+    <br>
+    <br>
+
+    <label>
+      Feed Link
+      <br>
+      <input type='url' required id='feed_link' name='feed_link' value='<%= feed["feed_link"] %>'>
     </label>
 
     <br>
@@ -48,7 +57,7 @@
     <label>
       Feed Description
       <br>
-      <input required id='feed_description' name='feed_description' value='<%= feed["description"] %>'>
+      <input required id='feed_description' name='feed_description' value='<%= feed["feed_description"] %>'>
     </label>
 
     <br>
