@@ -153,7 +153,12 @@ get '/feed/:id' do
   feed_id = params['id']
   feed = DB.execute('SELECT * FROM feeds WHERE id = ?', feed_id).first
   if feed
-    xml_data = feed.values_at('xml_data')
+    url, identifiers, title, description = feed.values_at('url', 'identifiers', 'feed_title', 'feed_description')
+
+    extractions = extract_html(url, identifiers)
+    xml_data = generate_xml(url, extractions, title, description)
+
+    # xml_data = feed.values_at('xml_data')
     content_type 'application/xml'
     xml_data
   else
