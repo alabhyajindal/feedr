@@ -96,7 +96,7 @@
         <% if current_user %>
           <a href='/feeds' class="<%= is_active_link('/feeds') %>">My feeds</a>
 
-          <a hx-delete='/logout' hx-trigger='click'>Logout</a>
+          <a hx-delete='/logout' hx-trigger='click' hx-confirm='Are you sure you want to logout?'>Logout</a>
         <% else %>
           <a href='/login' class="<%= is_active_link('/login') %>">Login</a>
         <% end %>
