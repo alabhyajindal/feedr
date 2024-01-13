@@ -12,8 +12,9 @@ DB.results_as_hash = true
 
 hmac_secret = '85oglfdmanbxjnvot95'
 Resend.api_key = "re_49xT7d1S_5w2ZaG4FpjG8UJVMsx9doE1w"
-enable :sessions
 
+enable :sessions
+set :session_secret, "70d8827c2ddd84bb54b249ed18706cc98d799f7712bade48c8652a067c407302fabd7d36d9daf90b107bde51843e7a2dc08cdbde2662e6816bd76c60bcd804b7"
 
 # Helper functions
 
@@ -136,6 +137,7 @@ end
 # Feed actions, index, edit and new
 
 get '/feeds' do
+  require_login
   @page_title = "My feeds | Feedr"
 
   feeds = DB.execute('SELECT * FROM feeds;')
@@ -242,6 +244,15 @@ get '/login/:token' do
     user_id = user['id']
   end
 
-  puts "User ID: #{user_id}"
   session['user_id'] = user_id
+  redirect '/'
+end
+
+def require_login
+  user_id = session['user_id']
+  if user_id
+    @current_user ||= DB.execute("SELECT id, email FROM Users WHERE id = ?", [user_id]).first
+  else
+    redirect '/'
+  end
 end
