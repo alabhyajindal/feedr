@@ -137,7 +137,6 @@ end
 # Feed actions, index, edit and new
 
 get '/feeds' do
-  require_login
   @page_title = "My feeds | Feedr"
 
   feeds = DB.execute('SELECT * FROM feeds;')
@@ -213,32 +212,32 @@ end
 
 post '/login' do
   request_body = JSON.parse(request.body.read)
-  email = request_body.values_at('email')
+  email, name = request_body.values_at('email', 'name')
 
-  payload = { email: email }
+  payload = { email: email, name: name }
   token = JWT.encode payload, hmac_secret, 'HS256'
   puts token
 
-  params = {
-    from: 'Acme <onboarding@resend.dev>',
-    to: ['delivered@resend.dev'],
-    subject: 'hello world',
-    html: '<strong>it works!</strong>',
-  }
+  # params = {
+  #   from: 'Acme <onboarding@resend.dev>',
+  #   to: ['delivered@resend.dev'],
+  #   subject: 'hello world',
+  #   html: '<strong>it works!</strong>',
+  # }
 
-  Resend::Emails.send(params).to_hash.to_json
+  # Resend::Emails.send(params).to_hash.to_json
   "<p><em>Check your email for the login link</em></p>"
 end
 
 get '/login/:token' do
   token = params[:token]
   decoded_token = JWT.decode(token, hmac_secret, true, { algorithm: 'HS256' })
-  email = decoded_token[0]['email']
+  email, name = decoded_token[0].values_at('email', 'name')
 
   user = DB.execute("SELECT id FROM Users WHERE email = ?", [email]).first
 
   if user.nil?
-    DB.execute("INSERT INTO Users (email) VALUES (?)", [email])
+    DB.execute("INSERT INTO Users (email, name) VALUES (?, ?)", [email, name])
     user_id = DB.last_insert_row_id
   else
     user_id = user['id']
@@ -248,11 +247,20 @@ get '/login/:token' do
   redirect '/'
 end
 
-def require_login
+def authenticate!
   user_id = session['user_id']
-  if user_id
-    @current_user ||= DB.execute("SELECT id, email FROM Users WHERE id = ?", [user_id]).first
-  else
-    redirect '/'
+  redirect '/' unless user_id
+end
+
+helpers do
+  def active_link_class(link_path)
+    'active-link' if request.path == link_path
+  end
+
+  def current_user
+    user_id = session['user_id']
+    if user_id
+      @current_user ||= DB.execute("SELECT id, email, name FROM Users WHERE id = ?", [user_id]).first
+    end
   end
 end

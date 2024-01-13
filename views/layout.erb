@@ -8,23 +8,27 @@
     <style>
       body {
         font-family: sans-serif;
-        color:'#343a40'
+        color:'#343a40';
+        max-width: 800px;
+        margin: 0 auto;
       }
 
       a:active {
         color: inherit;
       }
 
-      header {
-        display: flex;
-        align-items: center;
-        justify-content: start;
-        gap: 3em;
-      }
-
       nav {
         display: flex;
-        gap: 2em;
+        align-items: center;
+        justify-content: space-between;
+        gap: 3em;
+        margin-inline: 1em;
+      }
+
+      main {
+        max-width: 600px;
+        margin: 0 auto;
+        margin-top: 4em;
       }
 
       .active-link {
@@ -41,21 +45,24 @@
   </head>
   <body>
     <header>
-      <h1><a id='feedr-text' href='/'>Feedr</a></h1>
-
       <nav>
-        <a href="/" class=<%= 'active-link' if request.path == '/' %>>Home</a>
-        <a href='/guide' class=<%= 'active-link' if request.path == '/guide' %>>Guide</a>
-        <a href='/login' class=<%= 'active-link' if request.path == '/login' %>>Login</a>
-        <a href='/feeds' class=<%= 'active-link' if request.path == '/feeds' %>>My feeds</a>
-    </nav>
-    </header>
+        <h1><a id='feedr-text' href='/'><%= current_user['name'] %>'s Feedr</a></h1>
 
-    
+        <a href="/" class="<%= active_link_class('/') %>">Home</a>
+        <a href='/guide' class="<%= active_link_class('/guide') %>">Guide</a>
+        <% if current_user %>
+          <a href='/feeds' class="<%= active_link_class('/feeds') %>">My feeds</a>
+
+          <span>Logout</span>
+        <% else %>
+          <a href='/login' class="<%= active_link_class('/login') %>">Login</a>
+        <% end %>
+      </nav>
+    </header>
 
     <main>
       <%= yield %>
     </main>
 
-        </body>
-      </html>
+  </body>
+</html>
