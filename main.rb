@@ -97,8 +97,9 @@ end
 
 def handle_feed(action, request_body, feed_id = nil)
   url, identifiers, feed_title, feed_link, feed_description = request_body.values_at('url', 'identifiers', 'feed_title', 'feed_link', 'feed_description')
+  feed_link[feed_link.size - 1] = "" if feed_link[feed_link.size - 1] == "/"
   user_id = current_user['id']
-
+  
   case action
   when 'create'
     DB.execute("INSERT INTO feeds (url, identifiers, feed_title, feed_link, feed_description, user_id) VALUES (?, ?, ?, ?, ?, ?)", [url, identifiers, feed_title, feed_link, feed_description, user_id])
